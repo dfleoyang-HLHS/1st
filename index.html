@@ -56,7 +56,54 @@
       display: flex;
       align-items: flex-end;
       gap: 20px;
+      flex-wrap: wrap;
     }
+
+    .header-actions {
+      margin-left: auto;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .action-btn:hover {
+      border-color: var(--text-muted);
+      color: var(--text);
+      background: var(--surface2);
+    }
+
+    .action-btn.export:hover {
+      border-color: var(--accent-teach);
+      color: var(--accent-teach);
+      background: var(--accent-teach-dim);
+    }
+
+    .action-btn.import:hover {
+      border-color: #a78bfa;
+      color: #a78bfa;
+      background: rgba(167,139,250,0.1);
+    }
+
+    .action-btn svg { flex-shrink: 0; }
 
     .logo-mark {
       width: 48px;
@@ -431,6 +478,17 @@
       <h1>Vibe Portal</h1>
       <p>校園入口導覽網站</p>
     </div>
+    <div class="header-actions">
+      <input type="file" id="file-input" accept=".json" style="display:none" onchange="importJSON(event)" />
+      <button class="action-btn import" onclick="document.getElementById('file-input').click()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        匯入 db.json
+      </button>
+      <button class="action-btn export" onclick="exportJSON()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        匯出 db.json
+      </button>
+    </div>
   </header>
 
   <main>
@@ -592,6 +650,49 @@
         addLink();
       }
     });
+
+    // ── 匯出 db.json ──
+    function exportJSON() {
+      const json = JSON.stringify(db, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href     = url;
+      a.download = 'db.json';
+      a.click();
+      URL.revokeObjectURL(url);
+      toast('✓ 已匯出 db.json');
+    }
+
+    // ── 匯入 db.json ──
+    function importJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          const imported = JSON.parse(e.target.result);
+          // 驗證格式
+          if (!Array.isArray(imported.links)) throw new Error('格式錯誤');
+          // 確保每筆資料有必要欄位
+          imported.links.forEach(l => {
+            if (!l.id || !l.category || !l.url) throw new Error('欄位不完整');
+          });
+          // 重新計算 nextId
+          const maxId = imported.links.reduce((m, l) => Math.max(m, l.id), 0);
+          imported.nextId = Math.max(imported.nextId || 0, maxId + 1);
+          db = imported;
+          saveDB(db);
+          render();
+          toast(`✓ 已匯入 ${db.links.length} 筆資料`);
+        } catch (err) {
+          toast('❌ 匯入失敗：' + err.message);
+        }
+        // 清除 file input，讓下次可重新選同一個檔
+        event.target.value = '';
+      };
+      reader.readAsText(file);
+    }
 
     // ── Init ──
     render();
