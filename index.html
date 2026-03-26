@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vibe Portal · 入口網站</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0f14;
+      --surface: #161922;
+      --surface2: #1e2230;
+      --border: #2a2f42;
+      --accent-teach: #4fffb0;
+      --accent-admin: #ff6b6b;
+      --accent-teach-dim: rgba(79,255,176,0.12);
+      --accent-admin-dim: rgba(255,107,107,0.12);
+      --text: #e8eaf0;
+      --text-muted: #6b7492;
+      --text-dim: #3a3f58;
+      --radius: 12px;
+      --font-body: 'Noto Sans TC', sans-serif;
+      --font-mono: 'Space Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Noise overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+    }
+
+    /* ── Header ── */
+    header {
+      position: relative;
+      z-index: 10;
+      padding: 48px 40px 32px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-end;
+      gap: 20px;
+    }
+
+    .logo-mark {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent-teach), var(--accent-admin));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 20px;
+      font-weight: 700;
+      color: #0d0f14;
+      flex-shrink: 0;
+      box-shadow: 0 0 32px rgba(79,255,176,0.25);
+      animation: pulse-glow 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 32px rgba(79,255,176,0.25); }
+      50% { box-shadow: 0 0 48px rgba(79,255,176,0.45), 0 0 80px rgba(255,107,107,0.15); }
+    }
+
+    .header-text h1 {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
+
+    .header-text p {
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      margin-top: 4px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* ── Main layout ── */
+    main {
+      position: relative;
+      z-index: 10;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 40px 60px;
+    }
+
+    /* ── Input Panel ── */
+    .input-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-bottom: 48px;
+      position: relative;
+      overflow: hidden;
+      animation: slide-in 0.5s ease both;
+    }
+
+    @keyframes slide-in {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .input-panel::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent-teach), var(--accent-admin));
+    }
+
+    .panel-title {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field label {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .field-url { flex: 1 1 320px; }
+    .field-title { flex: 1 1 200px; }
+    .field-cat { flex: 0 0 auto; }
+
+    input[type="text"], input[type="url"] {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 11px 16px;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input[type="text"]:focus, input[type="url"]:focus {
+      border-color: var(--accent-teach);
+      box-shadow: 0 0 0 3px rgba(79,255,176,0.1);
+    }
+
+    input::placeholder { color: var(--text-dim); }
+
+    .cat-tabs {
+      display: flex;
+      gap: 6px;
+    }
+
+    .cat-btn {
+      padding: 11px 20px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .cat-btn:hover { border-color: var(--text-muted); color: var(--text); }
+
+    .cat-btn.teach.active {
+      background: var(--accent-teach-dim);
+      border-color: var(--accent-teach);
+      color: var(--accent-teach);
+    }
+
+    .cat-btn.admin.active {
+      background: var(--accent-admin-dim);
+      border-color: var(--accent-admin);
+      color: var(--accent-admin);
+    }
+
+    .add-btn {
+      padding: 11px 28px;
+      border-radius: 8px;
+      border: none;
+      background: linear-gradient(135deg, var(--accent-teach), #00d4ff);
+      color: #0d0f14;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+      white-space: nowrap;
+      align-self: flex-end;
+    }
+
+    .add-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(79,255,176,0.3);
+    }
+
+    .add-btn:active { transform: translateY(0); }
+
+    /* Toast */
+    #toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-size: 13px;
+      font-family: var(--font-mono);
+      color: var(--accent-teach);
+      z-index: 1000;
+      transition: transform 0.3s cubic-bezier(.34,1.56,.64,1);
+      pointer-events: none;
+    }
+
+    #toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ── Links Grid ── */
+    .section-header {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 640px) {
+      header { padding: 28px 20px 20px; }
+      main { padding: 28px 20px 48px; }
+      .columns { grid-template-columns: 1fr; }
+      .input-row { flex-direction: column; }
+      .add-btn { width: 100%; text-align: center; }
+    }
+
+    .column {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      animation: slide-in 0.5s ease both;
+    }
+
+    .column:nth-child(2) { animation-delay: 0.08s; }
+
+    .col-header {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .col-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .col-teach .col-dot { background: var(--accent-teach); box-shadow: 0 0 8px var(--accent-teach); }
+    .col-admin .col-dot { background: var(--accent-admin); box-shadow: 0 0 8px var(--accent-admin); }
+
+    .col-title {
+      font-size: 15px;
+      font-weight: 700;
+      flex: 1;
+    }
+
+    .col-count {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      background: var(--bg);
+      padding: 2px 8px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .link-list {
+      list-style: none;
+      padding: 8px 0;
+      min-height: 60px;
+    }
+
+    .link-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 24px;
+      transition: background 0.15s;
+      animation: fade-in 0.3s ease both;
+    }
+
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateX(-8px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    .link-item:hover { background: var(--surface2); }
+
+    .link-icon {
+      width: 28px; height: 28px;
+      border-radius: 6px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+    }
+
+    .col-teach .link-icon { background: var(--accent-teach-dim); color: var(--accent-teach); }
+    .col-admin .link-icon { background: var(--accent-admin-dim); color: var(--accent-admin); }
+
+    .link-info { flex: 1; min-width: 0; }
+
+    .link-name {
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .link-url {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .link-open {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 10px;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+
+    .link-open:hover {
+      border-color: var(--text-muted);
+      color: var(--text);
+    }
+
+    .link-del {
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 4px 6px;
+      border-radius: 6px;
+      transition: all 0.15s;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    .link-del:hover { background: rgba(255,107,107,0.12); color: var(--accent-admin); }
+
+    .empty {
+      text-align: center;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: var(--text-dim);
+      padding: 32px 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo-mark">VP</div>
+    <div class="header-text">
+      <h1>Vibe Portal</h1>
+      <p>校園入口導覽網站</p>
+    </div>
+  </header>
+
+  <main>
+    <!-- 新增連結 -->
+    <div class="input-panel">
+      <div class="panel-title">// 新增連結</div>
+      <div class="input-row">
+        <div class="field field-title">
+          <label>名稱</label>
+          <input type="text" id="inp-title" placeholder="網站名稱" />
+        </div>
+        <div class="field field-url">
+          <label>網址</label>
+          <input type="url" id="inp-url" placeholder="https://example.com" />
+        </div>
+        <div class="field field-cat">
+          <label>分類</label>
+          <div class="cat-tabs">
+            <button class="cat-btn teach active" data-cat="教學" onclick="selectCat(this)">教學</button>
+            <button class="cat-btn admin" data-cat="行政" onclick="selectCat(this)">行政</button>
+          </div>
+        </div>
+        <button class="add-btn" onclick="addLink()">＋ 新增</button>
+      </div>
+    </div>
+
+    <!-- 連結列表 -->
+    <div class="section-header">// 連結目錄</div>
+    <div class="columns">
+      <div class="column col-teach" id="col-teach">
+        <div class="col-header">
+          <div class="col-dot"></div>
+          <span class="col-title">教學</span>
+          <span class="col-count" id="count-teach">0</span>
+        </div>
+        <ul class="link-list" id="list-teach"></ul>
+      </div>
+      <div class="column col-admin" id="col-admin">
+        <div class="col-header">
+          <div class="col-dot"></div>
+          <span class="col-title">行政</span>
+          <span class="col-count" id="count-admin">0</span>
+        </div>
+        <ul class="link-list" id="list-admin"></ul>
+      </div>
+    </div>
+  </main>
+
+  <div id="toast"></div>
+
+  <script>
+    // ── DB helpers (localStorage mirrors db.json structure) ──
+    const DB_KEY = 'vibe_portal_db';
+
+    function loadDB() {
+      const raw = localStorage.getItem(DB_KEY);
+      if (raw) return JSON.parse(raw);
+      // Default seed data (mirrors db.json)
+      return {
+        links: [
+          { id: 1, category: '教學', title: '均一教育平台', url: 'https://www.junyiacademy.org' },
+          { id: 2, category: '教學', title: 'Cool English 酷英', url: 'https://coolenglish.edu.tw' },
+          { id: 3, category: '行政', title: '教育部全球資訊網', url: 'https://www.moe.gov.tw' },
+          { id: 4, category: '行政', title: '學校雲端服務平台', url: 'https://www.k12cc.tw' }
+        ],
+        nextId: 5
+      };
+    }
+
+    function saveDB(db) {
+      localStorage.setItem(DB_KEY, JSON.stringify(db, null, 2));
+    }
+
+    // ── State ──
+    let db = loadDB();
+    let selectedCat = '教學';
+
+    // ── Category selector ──
+    function selectCat(btn) {
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedCat = btn.dataset.cat;
+    }
+
+    // ── Add link ──
+    function addLink() {
+      const title = document.getElementById('inp-title').value.trim();
+      const url   = document.getElementById('inp-url').value.trim();
+
+      if (!title) { toast('請輸入名稱'); return; }
+      if (!url || !url.startsWith('http')) { toast('請輸入有效網址（http…）'); return; }
+
+      const entry = { id: db.nextId++, category: selectedCat, title, url };
+      db.links.push(entry);
+      saveDB(db);
+
+      document.getElementById('inp-title').value = '';
+      document.getElementById('inp-url').value   = '';
+
+      render();
+      toast('✓ 已新增：' + title);
+    }
+
+    // ── Delete link ──
+    function deleteLink(id) {
+      db.links = db.links.filter(l => l.id !== id);
+      saveDB(db);
+      render();
+      toast('已刪除');
+    }
+
+    // ── Render ──
+    function render() {
+      const teach = db.links.filter(l => l.category === '教學');
+      const admin = db.links.filter(l => l.category === '行政');
+
+      document.getElementById('count-teach').textContent = teach.length;
+      document.getElementById('count-admin').textContent = admin.length;
+
+      document.getElementById('list-teach').innerHTML = renderList(teach, 'teach');
+      document.getElementById('list-admin').innerHTML = renderList(admin, 'admin');
+    }
+
+    function renderList(items, cls) {
+      if (!items.length) return `<li class="empty">— 尚無連結 —</li>`;
+      return items.map((l, i) => {
+        const initial = (l.title || '?')[0];
+        const shortUrl = l.url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+        return `
+          <li class="link-item" style="animation-delay:${i * 0.05}s">
+            <div class="link-icon">${initial}</div>
+            <div class="link-info">
+              <div class="link-name">${escHtml(l.title)}</div>
+              <div class="link-url">${escHtml(shortUrl)}</div>
+            </div>
+            <a class="link-open" href="${escHtml(l.url)}" target="_blank" rel="noopener">開啟</a>
+            <button class="link-del" title="刪除" onclick="deleteLink(${l.id})">✕</button>
+          </li>`;
+      }).join('');
+    }
+
+    function escHtml(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // ── Toast ──
+    let toastTimer;
+    function toast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+    }
+
+    // ── Enter to submit ──
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && (e.target.id === 'inp-url' || e.target.id === 'inp-title')) {
+        addLink();
+      }
+    });
+
+    // ── Init ──
+    render();
+  </script>
+</body>
+</html>

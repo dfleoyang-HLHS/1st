@@ -1,0 +1,29 @@
+{
+  "links": [
+    {
+      "id": 1,
+      "category": "教學",
+      "title": "均一教育平台",
+      "url": "https://www.junyiacademy.org"
+    },
+    {
+      "id": 2,
+      "category": "教學",
+      "title": "Cool English 酷英",
+      "url": "https://coolenglish.edu.tw"
+    },
+    {
+      "id": 3,
+      "category": "行政",
+      "title": "教育部全球資訊網",
+      "url": "https://www.moe.gov.tw"
+    },
+    {
+      "id": 4,
+      "category": "行政",
+      "title": "學校雲端服務平台",
+      "url": "https://www.k12cc.tw"
+    }
+  ],
+  "nextId": 5
+}
