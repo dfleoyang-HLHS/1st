@@ -2,28 +2,52 @@
   "links": [
     {
       "id": 1,
-      "category": "教學",
-      "title": "均一教育平台",
-      "url": "https://www.junyiacademy.org"
+      "category": "行政",
+      "title": "學生圖表",
+      "url": "https://dfleoyang-hlhs.github.io/HL-STUDENT/"
     },
     {
       "id": 2,
-      "category": "教學",
-      "title": "Cool English 酷英",
-      "url": "https://coolenglish.edu.tw"
+      "category": "行政",
+      "title": "115學測分析",
+      "url": "https://dfleoyang-hlhs.github.io/gsat-hlhs-115/"
     },
     {
       "id": 3,
       "category": "行政",
-      "title": "教育部全球資訊網",
-      "url": "https://www.moe.gov.tw"
+      "title": "115大學個人申請(2026)",
+      "url": "https://dfleoyang-hlhs.github.io/CACHLHS115/"
     },
     {
       "id": 4,
       "category": "行政",
-      "title": "學校雲端服務平台",
-      "url": "https://www.k12cc.tw"
+      "title": "課表查詢",
+      "url": "https://dfleoyang-hlhs.github.io/hlhs_class/"
+    },
+    {
+      "id": 5,
+      "category": "教學",
+      "title": "當下的力量",
+      "url": "https://dfleoyang-hlhs.github.io/powernow/"
+    },
+    {
+      "id": 6,
+      "category": "教學",
+      "title": "化學元素",
+      "url": "https://dfleoyang-hlhs.github.io/chemicalelement/"
+    },
+    {
+      "id": 7,
+      "category": "教學",
+      "title": "高中化學",
+      "url": "https://dfleoyang-hlhs.github.io/chem_master/"
+    },
+    {
+      "id": 8,
+      "category": "教學",
+      "title": "里歐咖啡",
+      "url": "https://dfleoyang-hlhs.github.io/leocafe/"
     }
   ],
-  "nextId": 5
+  "nextId": 9
 }
