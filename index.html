@@ -468,9 +468,55 @@
       color: var(--text-dim);
       padding: 32px 20px;
     }
+    /* ── 未儲存提示橫幅 ── */
+    #unsaved-banner {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      background: linear-gradient(90deg, #78350f, #92400e);
+      border-bottom: 1px solid #b45309;
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      font-family: var(--font-mono);
+      color: #fde68a;
+      transform: translateY(-100%);
+      transition: transform 0.3s cubic-bezier(.34,1.56,.64,1);
+    }
+
+    #unsaved-banner.show { transform: translateY(0); }
+
+    #unsaved-banner .banner-icon { font-size: 16px; flex-shrink: 0; }
+
+    #unsaved-banner .banner-msg { flex: 1; }
+
+    #unsaved-banner .banner-btn {
+      background: #b45309;
+      border: 1px solid #d97706;
+      color: #fef3c7;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 1px;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+
+    #unsaved-banner .banner-btn:hover { background: #d97706; }
   </style>
 </head>
 <body>
+
+  <!-- 未儲存提示橫幅 -->
+  <div id="unsaved-banner">
+    <span class="banner-icon">⚠</span>
+    <span class="banner-msg">資料已變更，尚未存回 GitHub　→　請匯出 db.json 並上傳至 GitHub repo 覆蓋舊檔</span>
+    <button class="banner-btn" onclick="exportJSON()">立即匯出 db.json</button>
+  </div>
 
   <header>
     <div class="logo-mark">VP</div>
@@ -540,40 +586,64 @@
   <div id="toast"></div>
 
   <script>
-    // ── DB helpers (localStorage mirrors db.json structure) ──
-    const DB_KEY = 'vibe_portal_db';
-
-    function loadDB() {
-      const raw = localStorage.getItem(DB_KEY);
-      if (raw) return JSON.parse(raw);
-      // Default seed data (mirrors db.json)
-      return {
-        links: [
-          { id: 1, category: '教學', title: '均一教育平台', url: 'https://www.junyiacademy.org' },
-          { id: 2, category: '教學', title: 'Cool English 酷英', url: 'https://coolenglish.edu.tw' },
-          { id: 3, category: '行政', title: '教育部全球資訊網', url: 'https://www.moe.gov.tw' },
-          { id: 4, category: '行政', title: '學校雲端服務平台', url: 'https://www.k12cc.tw' }
-        ],
-        nextId: 5
-      };
-    }
-
-    function saveDB(db) {
-      localStorage.setItem(DB_KEY, JSON.stringify(db, null, 2));
-    }
-
-    // ── State ──
-    let db = loadDB();
+    // ══════════════════════════════════════════
+    //  狀態
+    // ══════════════════════════════════════════
+    let db = { links: [], nextId: 1 };
     let selectedCat = '教學';
+    let hasUnsaved  = false;   // 是否有未存回 GitHub 的變更
 
-    // ── Category selector ──
+    // ══════════════════════════════════════════
+    //  啟動：從 db.json fetch 資料（每次重新整理都重讀）
+    // ══════════════════════════════════════════
+    async function init() {
+      setLoading(true);
+      try {
+        // 加上時間戳避免瀏覽器快取
+        const res = await fetch('db.json?t=' + Date.now());
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        if (!Array.isArray(data.links)) throw new Error('db.json 格式錯誤');
+        const maxId = data.links.reduce((m, l) => Math.max(m, l.id || 0), 0);
+        db = { links: data.links, nextId: Math.max(data.nextId || 0, maxId + 1) };
+        render();
+      } catch (err) {
+        // fetch 失敗（本機直接開檔案）時顯示提示
+        showFetchError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function setLoading(on) {
+      ['list-teach','list-admin'].forEach(id => {
+        if (on) document.getElementById(id).innerHTML =
+          `<li class="empty">讀取中…</li>`;
+      });
+    }
+
+    function showFetchError(msg) {
+      ['list-teach','list-admin'].forEach(id => {
+        document.getElementById(id).innerHTML =
+          `<li class="empty" style="color:var(--accent-admin)">
+            ⚠ 無法讀取 db.json<br>
+            <span style="font-size:10px;opacity:.7">${msg}<br>請改用「匯入 db.json」按鈕</span>
+          </li>`;
+      });
+    }
+
+    // ══════════════════════════════════════════
+    //  分類選取
+    // ══════════════════════════════════════════
     function selectCat(btn) {
       document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       selectedCat = btn.dataset.cat;
     }
 
-    // ── Add link ──
+    // ══════════════════════════════════════════
+    //  新增連結
+    // ══════════════════════════════════════════
     function addLink() {
       const title = document.getElementById('inp-title').value.trim();
       const url   = document.getElementById('inp-url').value.trim();
@@ -581,41 +651,56 @@
       if (!title) { toast('請輸入名稱'); return; }
       if (!url || !url.startsWith('http')) { toast('請輸入有效網址（http…）'); return; }
 
-      const entry = { id: db.nextId++, category: selectedCat, title, url };
-      db.links.push(entry);
-      saveDB(db);
+      db.links.push({ id: db.nextId++, category: selectedCat, title, url });
 
       document.getElementById('inp-title').value = '';
       document.getElementById('inp-url').value   = '';
 
+      markUnsaved();
       render();
       toast('✓ 已新增：' + title);
     }
 
-    // ── Delete link ──
+    // ══════════════════════════════════════════
+    //  刪除連結
+    // ══════════════════════════════════════════
     function deleteLink(id) {
       db.links = db.links.filter(l => l.id !== id);
-      saveDB(db);
+      markUnsaved();
       render();
       toast('已刪除');
     }
 
-    // ── Render ──
+    // ══════════════════════════════════════════
+    //  未儲存提示橫幅
+    // ══════════════════════════════════════════
+    function markUnsaved() {
+      hasUnsaved = true;
+      document.getElementById('unsaved-banner').classList.add('show');
+    }
+
+    function clearUnsaved() {
+      hasUnsaved = false;
+      document.getElementById('unsaved-banner').classList.remove('show');
+    }
+
+    // ══════════════════════════════════════════
+    //  渲染
+    // ══════════════════════════════════════════
     function render() {
       const teach = db.links.filter(l => l.category === '教學');
       const admin = db.links.filter(l => l.category === '行政');
 
       document.getElementById('count-teach').textContent = teach.length;
       document.getElementById('count-admin').textContent = admin.length;
-
-      document.getElementById('list-teach').innerHTML = renderList(teach, 'teach');
-      document.getElementById('list-admin').innerHTML = renderList(admin, 'admin');
+      document.getElementById('list-teach').innerHTML = renderList(teach);
+      document.getElementById('list-admin').innerHTML = renderList(admin);
     }
 
-    function renderList(items, cls) {
+    function renderList(items) {
       if (!items.length) return `<li class="empty">— 尚無連結 —</li>`;
       return items.map((l, i) => {
-        const initial = (l.title || '?')[0];
+        const initial  = (l.title || '?')[0];
         const shortUrl = l.url.replace(/^https?:\/\//, '').replace(/\/$/, '');
         return `
           <li class="link-item" style="animation-delay:${i * 0.05}s">
@@ -634,37 +719,23 @@
       return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
-    // ── Toast ──
-    let toastTimer;
-    function toast(msg) {
-      const el = document.getElementById('toast');
-      el.textContent = msg;
-      el.classList.add('show');
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
-    }
-
-    // ── Enter to submit ──
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Enter' && (e.target.id === 'inp-url' || e.target.id === 'inp-title')) {
-        addLink();
-      }
-    });
-
-    // ── 匯出 db.json ──
+    // ══════════════════════════════════════════
+    //  匯出 db.json
+    // ══════════════════════════════════════════
     function exportJSON() {
       const json = JSON.stringify(db, null, 2);
       const blob = new Blob([json], { type: 'application/json' });
       const url  = URL.createObjectURL(blob);
       const a    = document.createElement('a');
-      a.href     = url;
-      a.download = 'db.json';
-      a.click();
+      a.href = url; a.download = 'db.json'; a.click();
       URL.revokeObjectURL(url);
-      toast('✓ 已匯出 db.json');
+      clearUnsaved();
+      toast('✓ 已匯出 db.json　→ 請上傳至 GitHub 覆蓋舊檔');
     }
 
-    // ── 匯入 db.json ──
+    // ══════════════════════════════════════════
+    //  匯入 db.json
+    // ══════════════════════════════════════════
     function importJSON(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -672,30 +743,52 @@
       reader.onload = e => {
         try {
           const imported = JSON.parse(e.target.result);
-          // 驗證格式
           if (!Array.isArray(imported.links)) throw new Error('格式錯誤');
-          // 確保每筆資料有必要欄位
-          imported.links.forEach(l => {
-            if (!l.id || !l.category || !l.url) throw new Error('欄位不完整');
-          });
-          // 重新計算 nextId
-          const maxId = imported.links.reduce((m, l) => Math.max(m, l.id), 0);
+          const maxId = imported.links.reduce((m, l) => Math.max(m, l.id || 0), 0);
           imported.nextId = Math.max(imported.nextId || 0, maxId + 1);
           db = imported;
-          saveDB(db);
+          clearUnsaved();
           render();
           toast(`✓ 已匯入 ${db.links.length} 筆資料`);
         } catch (err) {
           toast('❌ 匯入失敗：' + err.message);
         }
-        // 清除 file input，讓下次可重新選同一個檔
         event.target.value = '';
       };
       reader.readAsText(file);
     }
 
-    // ── Init ──
-    render();
+    // ══════════════════════════════════════════
+    //  Toast
+    // ══════════════════════════════════════════
+    let toastTimer;
+    function toast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+    }
+
+    // ══════════════════════════════════════════
+    //  Enter 快捷鍵
+    // ══════════════════════════════════════════
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && ['inp-url','inp-title'].includes(e.target.id)) addLink();
+    });
+
+    // ══════════════════════════════════════════
+    //  離開前警告
+    // ══════════════════════════════════════════
+    window.addEventListener('beforeunload', e => {
+      if (hasUnsaved) {
+        e.preventDefault();
+        e.returnValue = '有未匯出的資料，確定要離開？';
+      }
+    });
+
+    // ── 啟動 ──
+    init();
   </script>
 </body>
 </html>
