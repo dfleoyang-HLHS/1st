@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vibe Portal · 入口網站</title>
+  <title>Vibe Portal · 花蓮高中入口網站</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
   <style>
@@ -18,6 +18,8 @@
       --accent-admin: #ff6b6b;
       --accent-teach-dim: rgba(79,255,176,0.12);
       --accent-admin-dim: rgba(255,107,107,0.12);
+      --accent-github: #a78bfa;
+      --accent-github-dim: rgba(167,139,250,0.12);
       --text: #e8eaf0;
       --text-muted: #6b7492;
       --text-dim: #3a3f58;
@@ -36,131 +38,248 @@
       overflow-x: hidden;
     }
 
-    /* ── Noise overlay ── */
     body::before {
       content: '';
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.6;
+      pointer-events: none; z-index: 0; opacity: 0.6;
     }
 
     /* ── Header ── */
     header {
-      position: relative;
-      z-index: 10;
+      position: relative; z-index: 10;
       padding: 48px 40px 32px;
       border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: flex-end;
-      gap: 20px;
-      flex-wrap: wrap;
+      display: flex; align-items: flex-end; gap: 20px; flex-wrap: wrap;
     }
 
-    .header-actions {
+    .header-right {
       margin-left: auto;
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      flex-wrap: wrap;
+      display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
     }
 
-    .action-btn {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 16px;
-      border-radius: 8px;
+    /* 管理員模式徽章 */
+    .admin-badge {
+      display: none;
+      align-items: center; gap: 6px;
+      font-family: var(--font-mono); font-size: 10px; letter-spacing: 1px;
+      color: var(--accent-github);
+      padding: 6px 12px;
+      border: 1px solid rgba(167,139,250,0.35);
+      border-radius: 20px;
+      background: var(--accent-github-dim);
+    }
+
+    .admin-badge.show { display: flex; }
+
+    .admin-badge .ab-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: currentColor;
+      animation: blink 2s ease-in-out infinite;
+    }
+
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    /* 登入／登出按鈕 */
+    .auth-btn {
+      font-family: var(--font-mono); font-size: 11px; letter-spacing: 1px;
+      padding: 6px 14px; border-radius: 20px; cursor: pointer;
       border: 1px solid var(--border);
-      background: transparent;
-      color: var(--text-muted);
-      font-family: var(--font-mono);
-      font-size: 11px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      cursor: pointer;
+      background: transparent; color: var(--text-muted);
       transition: all 0.2s;
-      white-space: nowrap;
     }
 
-    .action-btn:hover {
-      border-color: var(--text-muted);
-      color: var(--text);
-      background: var(--surface2);
-    }
+    .auth-btn:hover { border-color: var(--accent-github); color: var(--accent-github); }
 
-    .action-btn.export:hover {
-      border-color: var(--accent-teach);
-      color: var(--accent-teach);
-      background: var(--accent-teach-dim);
-    }
-
-    .action-btn.import:hover {
-      border-color: #a78bfa;
-      color: #a78bfa;
-      background: rgba(167,139,250,0.1);
-    }
-
-    .action-btn svg { flex-shrink: 0; }
+    .auth-btn.logout { border-color: rgba(255,107,107,0.3); color: var(--accent-admin); }
+    .auth-btn.logout:hover { background: var(--accent-admin-dim); }
 
     .logo-mark {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
+      width: 48px; height: 48px; border-radius: 12px;
       background: linear-gradient(135deg, var(--accent-teach), var(--accent-admin));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font-mono);
-      font-size: 20px;
-      font-weight: 700;
-      color: #0d0f14;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-mono); font-size: 20px; font-weight: 700; color: #0d0f14;
       flex-shrink: 0;
       box-shadow: 0 0 32px rgba(79,255,176,0.25);
       animation: pulse-glow 3s ease-in-out infinite;
     }
 
     @keyframes pulse-glow {
-      0%, 100% { box-shadow: 0 0 32px rgba(79,255,176,0.25); }
-      50% { box-shadow: 0 0 48px rgba(79,255,176,0.45), 0 0 80px rgba(255,107,107,0.15); }
+      0%,100% { box-shadow: 0 0 32px rgba(79,255,176,0.25); }
+      50%      { box-shadow: 0 0 48px rgba(79,255,176,0.45), 0 0 80px rgba(255,107,107,0.15); }
     }
 
-    .header-text h1 {
-      font-size: 28px;
-      font-weight: 900;
-      letter-spacing: -0.5px;
-      line-height: 1;
+    .header-text h1 { font-size: 28px; font-weight: 900; letter-spacing: -0.5px; line-height: 1; }
+    .header-text p  {
+      font-size: 12px; font-family: var(--font-mono); color: var(--text-muted);
+      margin-top: 4px; letter-spacing: 2px; text-transform: uppercase;
     }
 
-    .header-text p {
-      font-size: 12px;
-      font-family: var(--font-mono);
-      color: var(--text-muted);
-      margin-top: 4px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    /* ── Main layout ── */
+    /* ── Main ── */
     main {
-      position: relative;
-      z-index: 10;
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 40px 40px 60px;
+      position: relative; z-index: 10;
+      max-width: 1100px; margin: 0 auto; padding: 40px 40px 60px;
     }
 
-    /* ── Input Panel ── */
-    .input-panel {
+    /* ── 登入對話框 ── */
+    #login-overlay {
+      position: fixed; inset: 0;
+      background: rgba(13,15,20,0.85);
+      backdrop-filter: blur(6px);
+      z-index: 600;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    #login-overlay.show { opacity: 1; pointer-events: all; }
+
+    .login-box {
       background: var(--surface);
-      border: 1px solid var(--border);
+      border: 1px solid rgba(167,139,250,0.3);
       border-radius: var(--radius);
-      padding: 32px;
-      margin-top: 24px;
+      padding: 36px;
+      width: 340px; max-width: 90vw;
       position: relative;
-      overflow: hidden;
+      transform: translateY(12px);
+      transition: transform 0.2s;
+    }
+
+    #login-overlay.show .login-box { transform: translateY(0); }
+
+    .login-box::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--accent-github), #6366f1);
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+
+    .login-title {
+      font-size: 13px; font-family: var(--font-mono);
+      color: var(--accent-github); letter-spacing: 2px; text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .login-sub {
+      font-size: 12px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6;
+    }
+
+    .login-field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+
+    .login-field label {
+      font-size: 10px; font-family: var(--font-mono);
+      color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase;
+    }
+
+    .login-field input {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+      padding: 11px 16px; color: var(--text);
+      font-family: var(--font-mono); font-size: 13px;
+      outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .login-field input:focus {
+      border-color: var(--accent-github);
+      box-shadow: 0 0 0 3px rgba(167,139,250,0.1);
+    }
+
+    .login-field input::placeholder { color: var(--text-dim); }
+
+    .login-error {
+      font-size: 12px; font-family: var(--font-mono);
+      color: var(--accent-admin); margin-bottom: 14px;
+      min-height: 18px;
+    }
+
+    .login-btns { display: flex; gap: 10px; justify-content: flex-end; }
+
+    .login-cancel {
+      padding: 9px 20px; border-radius: 8px;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--text-muted); font-family: var(--font-mono); font-size: 12px;
+      cursor: pointer; transition: all 0.15s;
+    }
+
+    .login-cancel:hover { border-color: var(--text-muted); color: var(--text); }
+
+    .login-ok {
+      padding: 9px 24px; border-radius: 8px; border: none;
+      background: linear-gradient(135deg, var(--accent-github), #6366f1);
+      color: #fff; font-family: var(--font-mono); font-size: 12px; font-weight: 700;
+      cursor: pointer; transition: opacity 0.15s;
+    }
+
+    .login-ok:hover { opacity: 0.85; }
+    .login-ok:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ── Worker URL 設定（只需填一次，存 localStorage）── */
+    .worker-setup {
+      background: var(--surface);
+      border: 1px solid rgba(167,139,250,0.25);
+      border-radius: var(--radius);
+      padding: 20px 28px;
+      margin-bottom: 28px;
+      display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+      position: relative; overflow: hidden;
+    }
+
+    .worker-setup::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--accent-github), #6366f1);
+    }
+
+    .worker-setup label {
+      font-size: 10px; font-family: var(--font-mono);
+      color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .worker-setup input {
+      flex: 1 1 280px;
+      background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+      padding: 9px 14px; color: var(--text);
+      font-family: var(--font-mono); font-size: 12px; outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .worker-setup input:focus { border-color: var(--accent-github); }
+    .worker-setup input::placeholder { color: var(--text-dim); }
+
+    /* ── 管理員工具列（新增連結 + 儲存，預設隱藏）── */
+    #admin-toolbar { display: none; }
+    #admin-toolbar.show { display: block; }
+
+    /* ── 未儲存提示橫幅 ── */
+    #unsaved-banner {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      background: linear-gradient(90deg, #78350f, #92400e);
+      border-bottom: 1px solid #b45309;
+      padding: 10px 24px;
+      display: flex; align-items: center; gap: 12px;
+      font-size: 13px; font-family: var(--font-mono); color: #fde68a;
+      transform: translateY(-100%);
+      transition: transform 0.3s cubic-bezier(.34,1.56,.64,1);
+    }
+
+    #unsaved-banner.show { transform: translateY(0); }
+    #unsaved-banner .banner-icon { font-size: 16px; flex-shrink: 0; }
+    #unsaved-banner .banner-msg  { flex: 1; }
+
+    #unsaved-banner .banner-btn {
+      background: #b45309; border: 1px solid #d97706; color: #fef3c7;
+      font-family: var(--font-mono); font-size: 11px; letter-spacing: 1px;
+      padding: 6px 14px; border-radius: 6px; cursor: pointer;
+      transition: background 0.15s; white-space: nowrap;
+    }
+
+    #unsaved-banner .banner-btn:hover { background: #d97706; }
+
+    /* ── 共用面板 ── */
+    .panel {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 32px;
+      margin-top: 24px; position: relative; overflow: hidden;
       animation: slide-in 0.5s ease both;
     }
 
@@ -169,42 +288,25 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    .input-panel::before {
+    .panel::before {
       content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
       background: linear-gradient(90deg, var(--accent-teach), var(--accent-admin));
     }
 
     .panel-title {
-      font-size: 11px;
-      font-family: var(--font-mono);
-      color: var(--text-muted);
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      margin-bottom: 24px;
+      font-size: 11px; font-family: var(--font-mono); color: var(--text-muted);
+      letter-spacing: 3px; text-transform: uppercase; margin-bottom: 24px;
     }
 
-    .input-row {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-      align-items: flex-end;
-    }
+    /* ── 新增連結 ── */
+    .input-row { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-end; }
 
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+    .field { display: flex; flex-direction: column; gap: 8px; }
 
     .field label {
-      font-size: 11px;
-      font-family: var(--font-mono);
-      color: var(--text-muted);
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
+      font-size: 11px; font-family: var(--font-mono); color: var(--text-muted);
+      letter-spacing: 1.5px; text-transform: uppercase;
     }
 
     .field-url { flex: 1 1 320px; }
@@ -212,15 +314,10 @@
     .field-cat { flex: 0 0 auto; }
 
     input[type="text"], input[type="url"] {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 11px 16px;
-      color: var(--text);
-      font-family: var(--font-mono);
-      font-size: 13px;
-      width: 100%;
-      outline: none;
+      background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+      padding: 11px 16px; color: var(--text);
+      font-family: var(--font-mono); font-size: 13px;
+      width: 100%; outline: none;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
 
@@ -231,160 +328,132 @@
 
     input::placeholder { color: var(--text-dim); }
 
-    .cat-tabs {
-      display: flex;
-      gap: 6px;
-    }
+    .cat-tabs { display: flex; gap: 6px; }
 
     .cat-btn {
-      padding: 11px 20px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--text-muted);
-      font-family: var(--font-body);
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-      white-space: nowrap;
+      padding: 11px 20px; border-radius: 8px;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--text-muted); font-family: var(--font-body);
+      font-size: 14px; font-weight: 500; cursor: pointer;
+      transition: all 0.2s; white-space: nowrap;
     }
 
     .cat-btn:hover { border-color: var(--text-muted); color: var(--text); }
 
     .cat-btn.teach.active {
-      background: var(--accent-teach-dim);
-      border-color: var(--accent-teach);
-      color: var(--accent-teach);
+      background: var(--accent-teach-dim); border-color: var(--accent-teach); color: var(--accent-teach);
     }
 
     .cat-btn.admin.active {
-      background: var(--accent-admin-dim);
-      border-color: var(--accent-admin);
-      color: var(--accent-admin);
+      background: var(--accent-admin-dim); border-color: var(--accent-admin); color: var(--accent-admin);
     }
 
     .add-btn {
-      padding: 11px 28px;
-      border-radius: 8px;
-      border: none;
+      padding: 11px 28px; border-radius: 8px; border: none;
       background: linear-gradient(135deg, var(--accent-teach), #00d4ff);
-      color: #0d0f14;
-      font-family: var(--font-body);
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
-      white-space: nowrap;
-      align-self: flex-end;
+      color: #0d0f14; font-family: var(--font-body); font-size: 14px; font-weight: 700;
+      cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
+      white-space: nowrap; align-self: flex-end;
     }
 
-    .add-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 24px rgba(79,255,176,0.3);
-    }
-
+    .add-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(79,255,176,0.3); }
     .add-btn:active { transform: translateY(0); }
 
-    /* Toast */
-    #toast {
-      position: fixed;
-      bottom: 32px;
-      left: 50%;
-      transform: translateX(-50%) translateY(80px);
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 12px 24px;
-      font-size: 13px;
-      font-family: var(--font-mono);
-      color: var(--accent-teach);
-      z-index: 1000;
-      transition: transform 0.3s cubic-bezier(.34,1.56,.64,1);
-      pointer-events: none;
+    /* ── 資料管理區 ── */
+    .db-actions {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px 32px;
+      margin-top: 24px; position: relative; overflow: hidden;
     }
 
-    #toast.show { transform: translateX(-50%) translateY(0); }
+    .db-actions::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--accent-github), #6366f1);
+    }
+
+    .db-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+    .db-hint { font-size: 11px; font-family: var(--font-mono); color: var(--text-muted); flex: 1 1 200px; }
+
+    .action-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 16px; border-radius: 8px;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--text-muted); font-family: var(--font-mono);
+      font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+      cursor: pointer; transition: all 0.2s; white-space: nowrap;
+    }
+
+    .action-btn:hover { border-color: var(--text-muted); color: var(--text); background: var(--surface2); }
+
+    .action-btn.save-gh {
+      border-color: rgba(167,139,250,0.4);
+      color: var(--accent-github); background: var(--accent-github-dim);
+      position: relative; overflow: hidden;
+    }
+
+    .action-btn.save-gh:hover:not(:disabled) {
+      border-color: var(--accent-github); background: rgba(167,139,250,0.2);
+      box-shadow: 0 0 12px rgba(167,139,250,0.2);
+    }
+
+    .action-btn.save-gh:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .action-btn.save-gh.saving { pointer-events: none; }
+
+    .action-btn.save-gh.saving::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; height: 2px;
+      background: var(--accent-github);
+      animation: progress 1.5s ease-in-out infinite;
+    }
+
+    @keyframes progress {
+      0%   { width: 0%;  left: 0; }
+      50%  { width: 70%; left: 15%; }
+      100% { width: 0%;  left: 100%; }
+    }
+
+    .action-btn svg { flex-shrink: 0; }
 
     /* ── Links Grid ── */
     .section-header {
-      font-size: 11px;
-      font-family: var(--font-mono);
-      color: var(--text-muted);
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      margin-bottom: 20px;
+      font-size: 11px; font-family: var(--font-mono); color: var(--text-muted);
+      letter-spacing: 3px; text-transform: uppercase; margin-bottom: 20px;
     }
 
-    .columns {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-    }
-
-    @media (max-width: 640px) {
-      header { padding: 28px 20px 20px; }
-      main { padding: 28px 20px 48px; }
-      .columns { grid-template-columns: 1fr; }
-      .input-row { flex-direction: column; }
-      .add-btn { width: 100%; text-align: center; }
-    }
+    .columns { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 
     .column {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
       animation: slide-in 0.5s ease both;
     }
 
     .column:nth-child(2) { animation-delay: 0.08s; }
 
     .col-header {
-      padding: 20px 24px 16px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      padding: 20px 24px 16px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
     }
 
-    .col-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
+    .col-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
     .col-teach .col-dot { background: var(--accent-teach); box-shadow: 0 0 8px var(--accent-teach); }
     .col-admin .col-dot { background: var(--accent-admin); box-shadow: 0 0 8px var(--accent-admin); }
 
-    .col-title {
-      font-size: 15px;
-      font-weight: 700;
-      flex: 1;
-    }
+    .col-title { font-size: 15px; font-weight: 700; flex: 1; }
 
     .col-count {
-      font-size: 11px;
-      font-family: var(--font-mono);
-      color: var(--text-muted);
-      background: var(--bg);
-      padding: 2px 8px;
-      border-radius: 20px;
-      border: 1px solid var(--border);
+      font-size: 11px; font-family: var(--font-mono); color: var(--text-muted);
+      background: var(--bg); padding: 2px 8px; border-radius: 20px; border: 1px solid var(--border);
     }
 
-    .link-list {
-      list-style: none;
-      padding: 8px 0;
-      min-height: 60px;
-    }
+    .link-list { list-style: none; padding: 8px 0; min-height: 60px; }
 
     .link-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 24px;
-      transition: background 0.15s;
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 24px; transition: background 0.15s;
       animation: fade-in 0.3s ease both;
     }
 
@@ -396,15 +465,9 @@
     .link-item:hover { background: var(--surface2); }
 
     .link-icon {
-      width: 28px; height: 28px;
-      border-radius: 6px;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 700;
-      font-family: var(--font-mono);
+      width: 28px; height: 28px; border-radius: 6px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; font-family: var(--font-mono);
     }
 
     .col-teach .link-icon { background: var(--accent-teach-dim); color: var(--accent-teach); }
@@ -413,135 +476,131 @@
     .link-info { flex: 1; min-width: 0; }
 
     .link-name {
-      font-size: 13px;
-      font-weight: 500;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      font-size: 13px; font-weight: 500;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
     .link-url {
-      font-size: 11px;
-      font-family: var(--font-mono);
-      color: var(--text-muted);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      font-size: 11px; font-family: var(--font-mono); color: var(--text-muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
+    /* 開啟按鈕：依欄位顏色區分 */
     .link-open {
-      font-size: 11px;
-      font-family: var(--font-mono);
-      color: #7a6f3a;
-      text-decoration: none;
-      border: 1px solid #c8b96a;
-      border-radius: 6px;
-      padding: 4px 10px;
-      transition: all 0.2s;
-      flex-shrink: 0;
-      background: #fdf8dc;
+      font-size: 11px; font-family: var(--font-mono); text-decoration: none;
+      border-radius: 6px; padding: 4px 10px; transition: all 0.2s; flex-shrink: 0;
+      border: 1px solid rgba(79,255,176,0.3);
+      color: var(--accent-teach); background: var(--accent-teach-dim);
     }
 
     .link-open:hover {
-      background: #f5e97a;
-      border-color: #b8a43a;
-      color: #5a4e1a;
+      background: rgba(79,255,176,0.2); border-color: var(--accent-teach);
+      box-shadow: 0 0 8px rgba(79,255,176,0.2);
     }
 
+    .col-admin .link-open {
+      border-color: rgba(255,107,107,0.3);
+      color: var(--accent-admin); background: var(--accent-admin-dim);
+    }
+
+    .col-admin .link-open:hover {
+      background: rgba(255,107,107,0.2); border-color: var(--accent-admin);
+      box-shadow: 0 0 8px rgba(255,107,107,0.2);
+    }
+
+    /* 刪除按鈕：僅管理員模式顯示 */
     .link-del {
-      background: none;
-      border: none;
-      color: var(--text-dim);
-      cursor: pointer;
-      font-size: 14px;
-      padding: 4px 6px;
-      border-radius: 6px;
-      transition: all 0.15s;
-      flex-shrink: 0;
-      line-height: 1;
+      background: none; border: none; color: var(--text-dim);
+      cursor: pointer; font-size: 14px; padding: 4px 6px;
+      border-radius: 6px; transition: all 0.15s;
+      flex-shrink: 0; line-height: 1;
+      display: none;   /* 預設隱藏 */
     }
 
+    body.admin-mode .link-del { display: block; }
     .link-del:hover { background: rgba(255,107,107,0.12); color: var(--accent-admin); }
 
     .empty {
-      text-align: center;
-      font-size: 12px;
-      font-family: var(--font-mono);
-      color: var(--text-dim);
-      padding: 32px 20px;
-    }
-    /* ── 資料管理區（下方） ── */
-    .db-actions {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 24px 32px;
-      margin-top: 24px;
-      position: relative;
-      overflow: hidden;
+      text-align: center; font-size: 12px; font-family: var(--font-mono);
+      color: var(--text-dim); padding: 32px 20px;
     }
 
-    .db-actions::before {
+    /* ── 刪除確認 ── */
+    #confirm-overlay {
+      position: fixed; inset: 0;
+      background: rgba(13,15,20,0.8); backdrop-filter: blur(4px);
+      z-index: 500; display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    }
+
+    #confirm-overlay.show { opacity: 1; pointer-events: all; }
+
+    .confirm-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 32px;
+      max-width: 340px; width: 90%;
+      position: relative; transform: translateY(12px); transition: transform 0.2s;
+    }
+
+    #confirm-overlay.show .confirm-box { transform: translateY(0); }
+
+    .confirm-box::before {
       content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, #a78bfa, #6366f1);
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--accent-admin), #ff9a9a);
+      border-radius: var(--radius) var(--radius) 0 0;
     }
 
-    .db-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
+    .confirm-title {
+      font-size: 13px; font-family: var(--font-mono); color: var(--accent-admin);
+      letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px;
     }
 
-    .db-hint {
-      font-size: 11px;
-      font-family: var(--font-mono);
-      color: var(--text-muted);
-      flex: 1 1 200px;
+    .confirm-msg { font-size: 14px; color: var(--text); margin-bottom: 24px; line-height: 1.6; }
+    .confirm-name { font-weight: 700; color: var(--accent-admin); }
+    .confirm-btns { display: flex; gap: 10px; justify-content: flex-end; }
+
+    .confirm-cancel {
+      padding: 8px 20px; border-radius: 8px;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--text-muted); font-family: var(--font-mono); font-size: 12px;
+      cursor: pointer; transition: all 0.15s;
     }
 
-    /* ── 未儲存提示橫幅 ── */
-    #unsaved-banner {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 200;
-      background: linear-gradient(90deg, #78350f, #92400e);
-      border-bottom: 1px solid #b45309;
-      padding: 10px 24px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 13px;
-      font-family: var(--font-mono);
-      color: #fde68a;
-      transform: translateY(-100%);
-      transition: transform 0.3s cubic-bezier(.34,1.56,.64,1);
+    .confirm-cancel:hover { border-color: var(--text-muted); color: var(--text); }
+
+    .confirm-ok {
+      padding: 8px 20px; border-radius: 8px;
+      border: 1px solid rgba(255,107,107,0.4);
+      background: var(--accent-admin-dim); color: var(--accent-admin);
+      font-family: var(--font-mono); font-size: 12px;
+      cursor: pointer; transition: all 0.15s;
     }
 
-    #unsaved-banner.show { transform: translateY(0); }
+    .confirm-ok:hover { background: rgba(255,107,107,0.25); border-color: var(--accent-admin); }
 
-    #unsaved-banner .banner-icon { font-size: 16px; flex-shrink: 0; }
-
-    #unsaved-banner .banner-msg { flex: 1; }
-
-    #unsaved-banner .banner-btn {
-      background: #b45309;
-      border: 1px solid #d97706;
-      color: #fef3c7;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      letter-spacing: 1px;
-      padding: 6px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background 0.15s;
-      white-space: nowrap;
+    /* Toast */
+    #toast {
+      position: fixed; bottom: 32px; left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 12px 24px;
+      font-size: 13px; font-family: var(--font-mono); color: var(--accent-teach);
+      z-index: 1000; transition: transform 0.3s cubic-bezier(.34,1.56,.64,1);
+      pointer-events: none; max-width: 90vw; text-align: center;
     }
 
-    #unsaved-banner .banner-btn:hover { background: #d97706; }
+    #toast.show  { transform: translateX(-50%) translateY(0); }
+    #toast.error { color: var(--accent-admin); }
+
+    /* RWD */
+    @media (max-width: 640px) {
+      header { padding: 28px 20px 20px; }
+      main   { padding: 28px 20px 48px; }
+      .columns { grid-template-columns: 1fr; }
+      .input-row { flex-direction: column; }
+      .add-btn { width: 100%; text-align: center; }
+    }
   </style>
 </head>
 <body>
@@ -549,23 +608,75 @@
   <!-- 未儲存提示橫幅 -->
   <div id="unsaved-banner">
     <span class="banner-icon">⚠</span>
-    <span class="banner-msg">資料已變更，尚未存回 GitHub　→　請匯出 db.json 並上傳至 GitHub repo 覆蓋舊檔</span>
-    <button class="banner-btn" onclick="exportJSON()">立即匯出 db.json</button>
+    <span class="banner-msg">資料已變更，尚未儲存至 GitHub</span>
+    <button class="banner-btn" onclick="saveToGitHub()">立即儲存</button>
   </div>
 
+  <!-- 刪除確認對話框 -->
+  <div id="confirm-overlay">
+    <div class="confirm-box">
+      <div class="confirm-title">// 確認刪除</div>
+      <div class="confirm-msg">
+        確定要刪除 <span class="confirm-name" id="confirm-target-name"></span>？<br>
+        <span style="font-size:12px;color:var(--text-muted)">此動作無法復原。</span>
+      </div>
+      <div class="confirm-btns">
+        <button class="confirm-cancel" onclick="closeConfirm()">取消</button>
+        <button class="confirm-ok" onclick="confirmDelete()">確認刪除</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 登入對話框 -->
+  <div id="login-overlay">
+    <div class="login-box">
+      <div class="login-title">// 管理員登入</div>
+      <p class="login-sub">輸入管理密碼以進入編輯模式。密碼由 Cloudflare Worker 驗證，不在此網頁儲存。</p>
+      <div class="login-field">
+        <label>管理密碼</label>
+        <input type="password" id="login-pw" placeholder="••••••••" autocomplete="current-password" />
+      </div>
+      <div class="login-error" id="login-error"></div>
+      <div class="login-btns">
+        <button class="login-cancel" onclick="closeLogin()">取消</button>
+        <button class="login-ok" id="login-ok-btn" onclick="doLogin()">登入</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
   <header>
     <div class="logo-mark">VP</div>
     <div class="header-text">
       <h1>Vibe Portal</h1>
       <p>校園氛圍編碼網站</p>
     </div>
+    <div class="header-right">
+      <div class="admin-badge" id="admin-badge">
+        <div class="ab-dot"></div>
+        <span>管理員模式</span>
+      </div>
+      <button class="auth-btn" id="auth-btn" onclick="handleAuthBtn()">管理員登入</button>
+    </div>
   </header>
 
   <main>
-    <!-- 連結列表（移至上方） -->
+
+    <!-- Worker URL 設定（一次性，存 localStorage）-->
+    <div class="worker-setup" id="worker-setup">
+      <label>Worker URL</label>
+      <input type="url" id="worker-url-input"
+             placeholder="https://vibe-portal.你的帳號.workers.dev" />
+      <button class="action-btn" onclick="saveWorkerUrl()">儲存</button>
+      <span style="font-size:11px;font-family:var(--font-mono);color:var(--text-dim);flex:1 1 200px;">
+        部署 worker.js 後貼上 Worker 網址，僅存於此瀏覽器。
+      </span>
+    </div>
+
+    <!-- 連結目錄 -->
     <div class="section-header">// 連結目錄</div>
     <div class="columns">
-      <div class="column col-teach" id="col-teach">
+      <div class="column col-teach">
         <div class="col-header">
           <div class="col-dot"></div>
           <span class="col-title">教學</span>
@@ -573,7 +684,7 @@
         </div>
         <ul class="link-list" id="list-teach"></ul>
       </div>
-      <div class="column col-admin" id="col-admin">
+      <div class="column col-admin">
         <div class="col-header">
           <div class="col-dot"></div>
           <span class="col-title">行政</span>
@@ -583,73 +694,113 @@
       </div>
     </div>
 
-    <!-- 新增連結（移至下方） -->
-    <div class="input-panel">
-      <div class="panel-title">// 新增連結</div>
-      <div class="input-row">
-        <div class="field field-title">
-          <label>名稱</label>
-          <input type="text" id="inp-title" placeholder="網站名稱" />
-        </div>
-        <div class="field field-url">
-          <label>網址</label>
-          <input type="url" id="inp-url" placeholder="https://example.com" />
-        </div>
-        <div class="field field-cat">
-          <label>分類</label>
-          <div class="cat-tabs">
-            <button class="cat-btn teach active" data-cat="教學" onclick="selectCat(this)">教學</button>
-            <button class="cat-btn admin" data-cat="行政" onclick="selectCat(this)">行政</button>
-          </div>
-        </div>
-        <button class="add-btn" onclick="addLink()">＋ 新增</button>
-      </div>
-    </div>
+    <!-- 管理員工具列（登入後才顯示）-->
+    <div id="admin-toolbar">
 
-    <!-- 匯入／匯出（移至下方） -->
-    <div class="db-actions">
-      <div class="panel-title">// 資料管理</div>
-      <div class="db-row">
-        <input type="file" id="file-input" accept=".json" style="display:none" onchange="importJSON(event)" />
-        <button class="action-btn import" onclick="document.getElementById('file-input').click()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          匯入 db.json
-        </button>
-        <button class="action-btn export" onclick="exportJSON()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          匯出 db.json
-        </button>
-        <span class="db-hint">每次修改後請匯出並上傳至 GitHub repo，下次重新整理即可讀取最新資料。(管理者專用)</span>
+      <!-- 新增連結 -->
+      <div class="panel">
+        <div class="panel-title">// 新增連結</div>
+        <div class="input-row">
+          <div class="field field-title">
+            <label>名稱</label>
+            <input type="text" id="inp-title" placeholder="網站名稱" />
+          </div>
+          <div class="field field-url">
+            <label>網址</label>
+            <input type="url" id="inp-url" placeholder="https://example.com" />
+          </div>
+          <div class="field field-cat">
+            <label>分類</label>
+            <div class="cat-tabs">
+              <button class="cat-btn teach active" data-cat="教學" onclick="selectCat(this)">教學</button>
+              <button class="cat-btn admin" data-cat="行政" onclick="selectCat(this)">行政</button>
+            </div>
+          </div>
+          <button class="add-btn" onclick="addLink()">＋ 新增</button>
+        </div>
       </div>
-    </div>
+
+      <!-- 儲存 / 備份 -->
+      <div class="db-actions">
+        <div class="panel-title">// 資料管理</div>
+        <div class="db-row">
+          <button class="action-btn save-gh" id="btn-save" onclick="saveToGitHub()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+            </svg>
+            儲存至 GitHub
+          </button>
+          <input type="file" id="file-input" accept=".json" style="display:none" onchange="importJSON(event)" />
+          <button class="action-btn" onclick="document.getElementById('file-input').click()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            匯入備份
+          </button>
+          <button class="action-btn" onclick="exportJSON()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            備份下載
+          </button>
+          <span class="db-hint">修改後按「儲存至 GitHub」，約 1 分鐘後網頁生效。</span>
+        </div>
+      </div>
+
+    </div><!-- /admin-toolbar -->
+
   </main>
 
   <div id="toast"></div>
 
   <script>
     // ══════════════════════════════════════════
-    //  狀態
+    //  設定：Worker URL（存 localStorage）
     // ══════════════════════════════════════════
-    let db = { links: [], nextId: 1 };
-    let selectedCat = '教學';
-    let hasUnsaved  = false;   // 是否有未存回 GitHub 的變更
+    const WORKER_KEY = 'vibe_portal_worker_url';
+
+    let workerUrl = '';
+
+    function loadWorkerUrl() {
+      workerUrl = localStorage.getItem(WORKER_KEY) || '';
+      const input = document.getElementById('worker-url-input');
+      if (workerUrl) {
+        input.value = workerUrl;
+        document.getElementById('worker-setup').style.display = 'none';
+      }
+    }
+
+    function saveWorkerUrl() {
+      const val = document.getElementById('worker-url-input').value.trim();
+      try { new URL(val); } catch {
+        toast('請輸入有效的 Worker URL', true); return;
+      }
+      workerUrl = val.replace(/\/$/, '');
+      localStorage.setItem(WORKER_KEY, workerUrl);
+      document.getElementById('worker-setup').style.display = 'none';
+      toast('✓ Worker URL 已儲存，正在載入資料…');
+      loadDB();
+    }
 
     // ══════════════════════════════════════════
-    //  啟動：從 db.json fetch 資料（每次重新整理都重讀）
+    //  狀態
     // ══════════════════════════════════════════
-    async function init() {
+    let db      = { links: [], nextId: 1, sha: null };
+    let isAdmin = false;
+    let adminPw = '';           // 僅存於記憶體，不寫 localStorage
+    let selectedCat    = '教學';
+    let hasUnsaved     = false;
+    let pendingDeleteId = null;
+
+    // ══════════════════════════════════════════
+    //  讀取資料（GET /api/db，公開）
+    // ══════════════════════════════════════════
+    async function loadDB() {
+      if (!workerUrl) return;
       setLoading(true);
       try {
-        // 加上時間戳避免瀏覽器快取
-        const res = await fetch('db.json?t=' + Date.now());
-        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const res = await fetch(`${workerUrl}/api/db`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-        if (!Array.isArray(data.links)) throw new Error('db.json 格式錯誤');
-        const maxId = data.links.reduce((m, l) => Math.max(m, l.id || 0), 0);
-        db = { links: data.links, nextId: Math.max(data.nextId || 0, maxId + 1) };
+        db = { links: data.links || [], nextId: data.nextId || 1, sha: data.sha || null };
         render();
       } catch (err) {
-        // fetch 失敗（本機直接開檔案）時顯示提示
         showFetchError(err.message);
       } finally {
         setLoading(false);
@@ -658,8 +809,7 @@
 
     function setLoading(on) {
       ['list-teach','list-admin'].forEach(id => {
-        if (on) document.getElementById(id).innerHTML =
-          `<li class="empty">讀取中…</li>`;
+        if (on) document.getElementById(id).innerHTML = `<li class="empty">讀取中…</li>`;
       });
     }
 
@@ -667,10 +817,138 @@
       ['list-teach','list-admin'].forEach(id => {
         document.getElementById(id).innerHTML =
           `<li class="empty" style="color:var(--accent-admin)">
-            ⚠ 無法讀取 db.json<br>
-            <span style="font-size:10px;opacity:.7">${msg}<br>請改用「匯入 db.json」按鈕</span>
+            ⚠ 無法讀取資料<br>
+            <span style="font-size:10px;opacity:.7">${escHtml(msg)}</span>
           </li>`;
       });
+    }
+
+    // ══════════════════════════════════════════
+    //  管理員登入流程
+    // ══════════════════════════════════════════
+    function handleAuthBtn() {
+      if (isAdmin) { doLogout(); } else { openLogin(); }
+    }
+
+    function openLogin() {
+      document.getElementById('login-pw').value = '';
+      document.getElementById('login-error').textContent = '';
+      document.getElementById('login-overlay').classList.add('show');
+      setTimeout(() => document.getElementById('login-pw').focus(), 200);
+    }
+
+    function closeLogin() {
+      document.getElementById('login-overlay').classList.remove('show');
+    }
+
+    // 登入：用密碼直接試打一次 PUT，讓 Worker 驗證
+    async function doLogin() {
+      const pw  = document.getElementById('login-pw').value;
+      const btn = document.getElementById('login-ok-btn');
+      const err = document.getElementById('login-error');
+
+      if (!pw) { err.textContent = '請輸入密碼'; return; }
+      if (!workerUrl) { err.textContent = '請先設定 Worker URL'; return; }
+
+      btn.disabled = true;
+      btn.textContent = '驗證中…';
+      err.textContent = '';
+
+      try {
+        // 送一個與現有資料完全相同的 PUT，若密碼正確會成功（SHA 不變）
+        const res = await fetch(`${workerUrl}/api/db`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Admin-Password': pw,
+          },
+          body: JSON.stringify(db),
+        });
+
+        if (res.status === 401) {
+          err.textContent = '密碼錯誤，請重試。';
+          return;
+        }
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        // 更新 SHA
+        const result = await res.json();
+        if (result.sha) db.sha = result.sha;
+
+        adminPw = pw;
+        setAdminMode(true);
+        closeLogin();
+        toast('✓ 已進入管理員模式');
+
+      } catch (e) {
+        err.textContent = `連線失敗：${e.message}`;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '登入';
+      }
+    }
+
+    function doLogout() {
+      adminPw = '';
+      setAdminMode(false);
+      toast('已登出管理員模式');
+    }
+
+    function setAdminMode(on) {
+      isAdmin = on;
+      document.body.classList.toggle('admin-mode', on);
+      document.getElementById('admin-badge').classList.toggle('show', on);
+      document.getElementById('admin-toolbar').classList.toggle('show', on);
+      const btn = document.getElementById('auth-btn');
+      btn.textContent = on ? '登出' : '管理員登入';
+      btn.className   = on ? 'auth-btn logout' : 'auth-btn';
+      if (!on) clearUnsaved();
+      render();
+    }
+
+    // ══════════════════════════════════════════
+    //  儲存至 GitHub（PUT /api/db，需密碼）
+    // ══════════════════════════════════════════
+    async function saveToGitHub() {
+      if (!isAdmin) { toast('請先登入管理員', true); return; }
+      if (!workerUrl) { toast('請先設定 Worker URL', true); return; }
+
+      const btn = document.getElementById('btn-save');
+      btn.classList.add('saving');
+
+      try {
+        const res = await fetch(`${workerUrl}/api/db`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type':    'application/json',
+            'X-Admin-Password': adminPw,
+          },
+          body: JSON.stringify(db),
+        });
+
+        if (res.status === 401) {
+          // 密碼在記憶體中，理論上不應發生，但防呆
+          doLogout();
+          toast('工作階段已過期，請重新登入', true);
+          return;
+        }
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || `HTTP ${res.status}`);
+        }
+
+        const result = await res.json();
+        if (result.sha) db.sha = result.sha;
+        clearUnsaved();
+        toast('✓ 已儲存至 GitHub，約 1 分鐘後網頁生效');
+
+      } catch (err) {
+        toast(`❌ 儲存失敗：${err.message}`, true);
+      } finally {
+        btn.classList.remove('saving');
+      }
     }
 
     // ══════════════════════════════════════════
@@ -689,31 +967,55 @@
       const title = document.getElementById('inp-title').value.trim();
       const url   = document.getElementById('inp-url').value.trim();
 
-      if (!title) { toast('請輸入名稱'); return; }
-      if (!url || !url.startsWith('http')) { toast('請輸入有效網址（http…）'); return; }
+      if (!title) { toast('請輸入名稱', true); return; }
+
+      try {
+        const p = new URL(url);
+        if (!['http:','https:'].includes(p.protocol)) throw new Error();
+      } catch {
+        toast('請輸入有效網址（https://…）', true); return;
+      }
 
       db.links.push({ id: db.nextId++, category: selectedCat, title, url });
-
       document.getElementById('inp-title').value = '';
       document.getElementById('inp-url').value   = '';
-
       markUnsaved();
       render();
       toast('✓ 已新增：' + title);
     }
 
     // ══════════════════════════════════════════
-    //  刪除連結
+    //  刪除確認
     // ══════════════════════════════════════════
     function deleteLink(id) {
-      db.links = db.links.filter(l => l.id !== id);
+      const item = db.links.find(l => l.id === id);
+      if (!item) return;
+      pendingDeleteId = id;
+      document.getElementById('confirm-target-name').textContent = item.title;
+      document.getElementById('confirm-overlay').classList.add('show');
+    }
+
+    function closeConfirm() {
+      pendingDeleteId = null;
+      document.getElementById('confirm-overlay').classList.remove('show');
+    }
+
+    function confirmDelete() {
+      if (pendingDeleteId === null) return;
+      db.links = db.links.filter(l => l.id !== pendingDeleteId);
+      pendingDeleteId = null;
+      document.getElementById('confirm-overlay').classList.remove('show');
       markUnsaved();
       render();
       toast('已刪除');
     }
 
+    document.getElementById('confirm-overlay').addEventListener('click', function(e) {
+      if (e.target === this) closeConfirm();
+    });
+
     // ══════════════════════════════════════════
-    //  未儲存提示橫幅
+    //  未儲存提示
     // ══════════════════════════════════════════
     function markUnsaved() {
       hasUnsaved = true;
@@ -731,7 +1033,6 @@
     function render() {
       const teach = db.links.filter(l => l.category === '教學');
       const admin = db.links.filter(l => l.category === '行政');
-
       document.getElementById('count-teach').textContent = teach.length;
       document.getElementById('count-admin').textContent = admin.length;
       document.getElementById('list-teach').innerHTML = renderList(teach);
@@ -757,26 +1058,24 @@
     }
 
     function escHtml(s) {
-      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+      return String(s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
     // ══════════════════════════════════════════
-    //  匯出 db.json
+    //  備援：本機匯出 / 匯入
     // ══════════════════════════════════════════
     function exportJSON() {
-      const json = JSON.stringify(db, null, 2);
+      const json = JSON.stringify({ links: db.links, nextId: db.nextId }, null, 2);
       const blob = new Blob([json], { type: 'application/json' });
       const url  = URL.createObjectURL(blob);
       const a    = document.createElement('a');
       a.href = url; a.download = 'db.json'; a.click();
       URL.revokeObjectURL(url);
-      clearUnsaved();
-      toast('✓ 已匯出 db.json　→ 請上傳至 GitHub 覆蓋舊檔');
+      toast('✓ 已下載 db.json（備份用）');
     }
 
-    // ══════════════════════════════════════════
-    //  匯入 db.json
-    // ══════════════════════════════════════════
     function importJSON(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -786,13 +1085,13 @@
           const imported = JSON.parse(e.target.result);
           if (!Array.isArray(imported.links)) throw new Error('格式錯誤');
           const maxId = imported.links.reduce((m, l) => Math.max(m, l.id || 0), 0);
-          imported.nextId = Math.max(imported.nextId || 0, maxId + 1);
-          db = imported;
-          clearUnsaved();
+          db.links   = imported.links;
+          db.nextId  = Math.max(imported.nextId || 0, maxId + 1);
+          markUnsaved();
           render();
-          toast(`✓ 已匯入 ${db.links.length} 筆資料`);
+          toast(`✓ 已匯入 ${db.links.length} 筆資料（尚未儲存）`);
         } catch (err) {
-          toast('❌ 匯入失敗：' + err.message);
+          toast('❌ 匯入失敗：' + err.message, true);
         }
         event.target.value = '';
       };
@@ -803,33 +1102,35 @@
     //  Toast
     // ══════════════════════════════════════════
     let toastTimer;
-    function toast(msg) {
+    function toast(msg, isError = false) {
       const el = document.getElementById('toast');
       el.textContent = msg;
-      el.classList.add('show');
+      el.className = isError ? 'show error' : 'show';
       clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+      toastTimer = setTimeout(() => { el.className = ''; }, isError ? 4500 : 3000);
     }
 
     // ══════════════════════════════════════════
-    //  Enter 快捷鍵
+    //  快捷鍵
     // ══════════════════════════════════════════
     document.addEventListener('keydown', e => {
-      if (e.key === 'Enter' && ['inp-url','inp-title'].includes(e.target.id)) addLink();
+      if (e.key === 'Escape') { closeConfirm(); closeLogin(); }
+      if (e.key === 'Enter') {
+        if (['inp-url','inp-title'].includes(e.target.id)) addLink();
+        if (e.target.id === 'login-pw') doLogin();
+      }
     });
 
     // ══════════════════════════════════════════
     //  離開前警告
     // ══════════════════════════════════════════
     window.addEventListener('beforeunload', e => {
-      if (hasUnsaved) {
-        e.preventDefault();
-        e.returnValue = '有未匯出的資料，確定要離開？';
-      }
+      if (hasUnsaved) { e.preventDefault(); e.returnValue = ''; }
     });
 
     // ── 啟動 ──
-    init();
+    loadWorkerUrl();
+    loadDB();
   </script>
 </body>
 </html>
