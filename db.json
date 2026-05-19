@@ -53,7 +53,13 @@
       "category": "教學",
       "title": "六分鐘感恩日記",
       "url": "https://dfleoyang-hlhs.github.io/6minsDiary/"
+    },
+    {
+      "id": 10,
+      "category": "行政",
+      "title": "學生組成儀表板",
+      "url": "https://dfleoyang-hlhs.github.io/HL-STUDENT/"
     }
   ],
-  "nextId": 10
+  "nextId": 11
 }
