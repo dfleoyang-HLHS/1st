@@ -47,7 +47,13 @@
       "category": "教學",
       "title": "里歐咖啡",
       "url": "https://dfleoyang-hlhs.github.io/leocafe/"
+    },
+    {
+      "id": 9,
+      "category": "教學",
+      "title": "六分鐘感恩日記",
+      "url": "https://dfleoyang-hlhs.github.io/6minsDiary/"
     }
   ],
-  "nextId": 9
+  "nextId": 10
 }
