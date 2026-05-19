@@ -542,6 +542,41 @@
     body.admin-mode .link-del { display: block; }
     .link-del:hover { background: rgba(255,107,107,0.12); color: var(--accent-admin); }
 
+    /* ── 拖曳把手（管理員模式才顯示）── */
+    .drag-handle {
+      display: none;
+      cursor: grab; flex-shrink: 0;
+      color: var(--text-dim); padding: 4px 4px;
+      font-size: 14px; line-height: 1;
+      user-select: none;
+      transition: color 0.15s;
+    }
+
+    body.admin-mode .drag-handle { display: flex; align-items: center; }
+    .drag-handle:hover { color: var(--text-muted); }
+    .drag-handle:active { cursor: grabbing; }
+
+    .link-item.dragging {
+      opacity: 0.4;
+      background: var(--surface2);
+    }
+
+    .link-item.drag-over-top {
+      border-top: 2px solid var(--accent-teach);
+    }
+
+    .link-item.drag-over-bottom {
+      border-bottom: 2px solid var(--accent-teach);
+    }
+
+    .col-admin .link-item.drag-over-top {
+      border-top-color: var(--accent-admin);
+    }
+
+    .col-admin .link-item.drag-over-bottom {
+      border-bottom-color: var(--accent-admin);
+    }
+
     .empty {
       text-align: center; font-size: 12px; font-family: var(--font-mono);
       color: var(--text-dim); padding: 32px 20px;
@@ -1027,6 +1062,8 @@
       document.getElementById('count-admin').textContent = admin.length;
       document.getElementById('list-teach').innerHTML = renderList(teach);
       document.getElementById('list-admin').innerHTML = renderList(admin);
+      // 每次渲染後重新綁定拖曳事件
+      if (typeof initDrag === 'function') initDrag();
     }
 
     function renderList(items) {
@@ -1035,7 +1072,8 @@
         const initial  = (l.title || '?')[0];
         const shortUrl = l.url.replace(/^https?:\/\//, '').replace(/\/$/, '');
         return `
-          <li class="link-item" style="animation-delay:${i * 0.05}s">
+          <li class="link-item" draggable="true" data-id="${l.id}" style="animation-delay:${i * 0.05}s">
+            <div class="drag-handle" title="拖曳排序">⠿</div>
             <div class="link-icon">${initial}</div>
             <div class="link-info">
               <div class="link-name">${escHtml(l.title)}</div>
@@ -1045,6 +1083,74 @@
             <button class="link-del" title="刪除" onclick="deleteLink(${l.id})">✕</button>
           </li>`;
       }).join('');
+    }
+
+    // ══════════════════════════════════════════
+    //  拖曳排序
+    // ══════════════════════════════════════════
+    let dragSrcId = null;
+
+    function initDrag() {
+      ['list-teach', 'list-admin'].forEach(listId => {
+        const list = document.getElementById(listId);
+        if (!list) return;
+
+        list.addEventListener('dragstart', e => {
+          if (!isAdmin) return;
+          const li = e.target.closest('.link-item');
+          if (!li) return;
+          dragSrcId = parseInt(li.dataset.id);
+          li.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+        });
+
+        list.addEventListener('dragend', e => {
+          const li = e.target.closest('.link-item');
+          if (li) li.classList.remove('dragging');
+          list.querySelectorAll('.link-item').forEach(item => {
+            item.classList.remove('drag-over-top', 'drag-over-bottom');
+          });
+          dragSrcId = null;
+        });
+
+        list.addEventListener('dragover', e => {
+          if (!isAdmin || dragSrcId === null) return;
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          const li = e.target.closest('.link-item');
+          if (!li || parseInt(li.dataset.id) === dragSrcId) return;
+          list.querySelectorAll('.link-item').forEach(item => {
+            item.classList.remove('drag-over-top', 'drag-over-bottom');
+          });
+          const rect = li.getBoundingClientRect();
+          const mid  = rect.top + rect.height / 2;
+          li.classList.add(e.clientY < mid ? 'drag-over-top' : 'drag-over-bottom');
+        });
+
+        list.addEventListener('dragleave', e => {
+          const li = e.target.closest('.link-item');
+          if (li) li.classList.remove('drag-over-top', 'drag-over-bottom');
+        });
+
+        list.addEventListener('drop', e => {
+          if (!isAdmin || dragSrcId === null) return;
+          e.preventDefault();
+          const li = e.target.closest('.link-item');
+          if (!li) return;
+          const targetId = parseInt(li.dataset.id);
+          if (targetId === dragSrcId) return;
+          const isTop = li.classList.contains('drag-over-top');
+          const srcIndex = db.links.findIndex(l => l.id === dragSrcId);
+          const targetIndex = db.links.findIndex(l => l.id === targetId);
+          if (srcIndex === -1 || targetIndex === -1) return;
+          const [moved] = db.links.splice(srcIndex, 1);
+          const newTargetIndex = db.links.findIndex(l => l.id === targetId);
+          db.links.splice(isTop ? newTargetIndex : newTargetIndex + 1, 0, moved);
+          markUnsaved();
+          render();
+          initDrag();
+        });
+      });
     }
 
     function escHtml(s) {
@@ -1118,7 +1224,7 @@
     // ── 啟動 ──
     loadTheme();
     loadWorkerUrl();
-    loadDB();
+    loadDB().then(() => initDrag());
   </script>
 </body>
 </html>
