@@ -9,23 +9,47 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    /* ══════════════════════════════════════════
+       深色主題（預設）
+    ══════════════════════════════════════════ */
     :root {
-      --bg: #0d0f14;
-      --surface: #161922;
-      --surface2: #1e2230;
-      --border: #2a2f42;
-      --accent-teach: #4fffb0;
-      --accent-admin: #ff6b6b;
+      --bg:               #0d0f14;
+      --surface:          #161922;
+      --surface2:         #1e2230;
+      --border:           #2a2f42;
+      --accent-teach:     #4fffb0;
+      --accent-admin:     #ff6b6b;
       --accent-teach-dim: rgba(79,255,176,0.12);
       --accent-admin-dim: rgba(255,107,107,0.12);
-      --accent-github: #a78bfa;
-      --accent-github-dim: rgba(167,139,250,0.12);
-      --text: #e8eaf0;
-      --text-muted: #6b7492;
-      --text-dim: #3a3f58;
+      --accent-github:    #a78bfa;
+      --accent-github-dim:rgba(167,139,250,0.12);
+      --text:             #e8eaf0;
+      --text-muted:       #6b7492;
+      --text-dim:         #3a3f58;
+      --shadow:           rgba(0,0,0,0.4);
       --radius: 12px;
       --font-body: 'Noto Sans TC', sans-serif;
       --font-mono: 'Space Mono', monospace;
+    }
+
+    /* ══════════════════════════════════════════
+       淺色主題
+    ══════════════════════════════════════════ */
+    body.light {
+      --bg:               #f4f5f7;
+      --surface:          #ffffff;
+      --surface2:         #eef0f4;
+      --border:           #dde0e8;
+      --accent-teach:     #0a8f5c;
+      --accent-admin:     #d63a3a;
+      --accent-teach-dim: rgba(10,143,92,0.1);
+      --accent-admin-dim: rgba(214,58,58,0.1);
+      --accent-github:    #6d43d4;
+      --accent-github-dim:rgba(109,67,212,0.1);
+      --text:             #1a1d2e;
+      --text-muted:       #6b7280;
+      --text-dim:         #b0b5c3;
+      --shadow:           rgba(0,0,0,0.08);
     }
 
     html { scroll-behavior: smooth; }
@@ -36,14 +60,20 @@
       color: var(--text);
       min-height: 100vh;
       overflow-x: hidden;
+      transition: background 0.3s, color 0.3s;
     }
 
+    /* noise overlay（深色才顯示）*/
     body::before {
       content: '';
       position: fixed; inset: 0;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none; z-index: 0; opacity: 0.6;
+      pointer-events: none; z-index: 0;
+      opacity: 0.6;
+      transition: opacity 0.3s;
     }
+
+    body.light::before { opacity: 0; }
 
     /* ── Header ── */
     header {
@@ -51,11 +81,32 @@
       padding: 48px 40px 32px;
       border-bottom: 1px solid var(--border);
       display: flex; align-items: flex-end; gap: 20px; flex-wrap: wrap;
+      transition: border-color 0.3s;
     }
 
     .header-right {
       margin-left: auto;
       display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    }
+
+    /* ── 深淺切換按鈕 ── */
+    .theme-btn {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .theme-btn:hover {
+      border-color: var(--accent-teach);
+      color: var(--accent-teach);
+      transform: rotate(20deg);
     }
 
     /* 管理員模式徽章 */
@@ -80,7 +131,6 @@
 
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-    /* 登入／登出按鈕 */
     .auth-btn {
       font-family: var(--font-mono); font-size: 11px; letter-spacing: 1px;
       padding: 6px 14px; border-radius: 20px; cursor: pointer;
@@ -90,7 +140,6 @@
     }
 
     .auth-btn:hover { border-color: var(--accent-github); color: var(--accent-github); }
-
     .auth-btn.logout { border-color: rgba(255,107,107,0.3); color: var(--accent-admin); }
     .auth-btn.logout:hover { background: var(--accent-admin-dim); }
 
@@ -98,11 +147,13 @@
       width: 48px; height: 48px; border-radius: 12px;
       background: linear-gradient(135deg, var(--accent-teach), var(--accent-admin));
       display: flex; align-items: center; justify-content: center;
-      font-family: var(--font-mono); font-size: 20px; font-weight: 700; color: #0d0f14;
+      font-family: var(--font-mono); font-size: 20px; font-weight: 700; color: #fff;
       flex-shrink: 0;
       box-shadow: 0 0 32px rgba(79,255,176,0.25);
       animation: pulse-glow 3s ease-in-out infinite;
     }
+
+    body.light .logo-mark { color: #fff; box-shadow: 0 4px 16px var(--shadow); animation: none; }
 
     @keyframes pulse-glow {
       0%,100% { box-shadow: 0 0 32px rgba(79,255,176,0.25); }
@@ -110,7 +161,7 @@
     }
 
     .header-text h1 { font-size: 28px; font-weight: 900; letter-spacing: -0.5px; line-height: 1; }
-    .header-text p  {
+    .header-text p {
       font-size: 12px; font-family: var(--font-mono); color: var(--text-muted);
       margin-top: 4px; letter-spacing: 2px; text-transform: uppercase;
     }
@@ -132,6 +183,7 @@
       transition: opacity 0.2s;
     }
 
+    body.light #login-overlay { background: rgba(100,110,130,0.5); }
     #login-overlay.show { opacity: 1; pointer-events: all; }
 
     .login-box {
@@ -143,6 +195,7 @@
       position: relative;
       transform: translateY(12px);
       transition: transform 0.2s;
+      box-shadow: 0 20px 60px var(--shadow);
     }
 
     #login-overlay.show .login-box { transform: translateY(0); }
@@ -160,9 +213,7 @@
       margin-bottom: 8px;
     }
 
-    .login-sub {
-      font-size: 12px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6;
-    }
+    .login-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6; }
 
     .login-field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
 
@@ -187,8 +238,7 @@
 
     .login-error {
       font-size: 12px; font-family: var(--font-mono);
-      color: var(--accent-admin); margin-bottom: 14px;
-      min-height: 18px;
+      color: var(--accent-admin); margin-bottom: 14px; min-height: 18px;
     }
 
     .login-btns { display: flex; gap: 10px; justify-content: flex-end; }
@@ -212,41 +262,7 @@
     .login-ok:hover { opacity: 0.85; }
     .login-ok:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    /* ── Worker URL 設定（只需填一次，存 localStorage）── */
-    .worker-setup {
-      background: var(--surface);
-      border: 1px solid rgba(167,139,250,0.25);
-      border-radius: var(--radius);
-      padding: 20px 28px;
-      margin-bottom: 28px;
-      display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
-      position: relative; overflow: hidden;
-    }
-
-    .worker-setup::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, var(--accent-github), #6366f1);
-    }
-
-    .worker-setup label {
-      font-size: 10px; font-family: var(--font-mono);
-      color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase;
-      white-space: nowrap;
-    }
-
-    .worker-setup input {
-      flex: 1 1 280px;
-      background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
-      padding: 9px 14px; color: var(--text);
-      font-family: var(--font-mono); font-size: 12px; outline: none;
-      transition: border-color 0.2s;
-    }
-
-    .worker-setup input:focus { border-color: var(--accent-github); }
-    .worker-setup input::placeholder { color: var(--text-dim); }
-
-    /* ── 管理員工具列（新增連結 + 儲存，預設隱藏）── */
+    /* ── 管理員工具列 ── */
     #admin-toolbar { display: none; }
     #admin-toolbar.show { display: block; }
 
@@ -281,6 +297,8 @@
       border-radius: var(--radius); padding: 32px;
       margin-top: 24px; position: relative; overflow: hidden;
       animation: slide-in 0.5s ease both;
+      box-shadow: 0 2px 12px var(--shadow);
+      transition: background 0.3s, border-color 0.3s;
     }
 
     @keyframes slide-in {
@@ -299,9 +317,7 @@
       letter-spacing: 3px; text-transform: uppercase; margin-bottom: 24px;
     }
 
-    /* ── 新增連結 ── */
     .input-row { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-end; }
-
     .field { display: flex; flex-direction: column; gap: 8px; }
 
     .field label {
@@ -318,12 +334,16 @@
       padding: 11px 16px; color: var(--text);
       font-family: var(--font-mono); font-size: 13px;
       width: 100%; outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.3s;
     }
 
     input[type="text"]:focus, input[type="url"]:focus {
       border-color: var(--accent-teach);
       box-shadow: 0 0 0 3px rgba(79,255,176,0.1);
+    }
+
+    body.light input[type="text"]:focus, body.light input[type="url"]:focus {
+      box-shadow: 0 0 0 3px rgba(10,143,92,0.12);
     }
 
     input::placeholder { color: var(--text-dim); }
@@ -351,12 +371,14 @@
     .add-btn {
       padding: 11px 28px; border-radius: 8px; border: none;
       background: linear-gradient(135deg, var(--accent-teach), #00d4ff);
-      color: #0d0f14; font-family: var(--font-body); font-size: 14px; font-weight: 700;
+      color: #fff; font-family: var(--font-body); font-size: 14px; font-weight: 700;
       cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
       white-space: nowrap; align-self: flex-end;
     }
 
-    .add-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(79,255,176,0.3); }
+    body.light .add-btn { color: #fff; }
+
+    .add-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px var(--shadow); }
     .add-btn:active { transform: translateY(0); }
 
     /* ── 資料管理區 ── */
@@ -364,6 +386,8 @@
       background: var(--surface); border: 1px solid var(--border);
       border-radius: var(--radius); padding: 24px 32px;
       margin-top: 24px; position: relative; overflow: hidden;
+      box-shadow: 0 2px 12px var(--shadow);
+      transition: background 0.3s, border-color 0.3s;
     }
 
     .db-actions::before {
@@ -373,7 +397,6 @@
     }
 
     .db-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-
     .db-hint { font-size: 11px; font-family: var(--font-mono); color: var(--text-muted); flex: 1 1 200px; }
 
     .action-btn {
@@ -395,11 +418,9 @@
 
     .action-btn.save-gh:hover:not(:disabled) {
       border-color: var(--accent-github); background: rgba(167,139,250,0.2);
-      box-shadow: 0 0 12px rgba(167,139,250,0.2);
     }
 
     .action-btn.save-gh:disabled { opacity: 0.4; cursor: not-allowed; }
-
     .action-btn.save-gh.saving { pointer-events: none; }
 
     .action-btn.save-gh.saving::after {
@@ -429,6 +450,8 @@
       background: var(--surface); border: 1px solid var(--border);
       border-radius: var(--radius); overflow: hidden;
       animation: slide-in 0.5s ease both;
+      box-shadow: 0 2px 12px var(--shadow);
+      transition: background 0.3s, border-color 0.3s;
     }
 
     .column:nth-child(2) { animation-delay: 0.08s; }
@@ -436,17 +459,21 @@
     .col-header {
       padding: 20px 24px 16px; border-bottom: 1px solid var(--border);
       display: flex; align-items: center; gap: 10px;
+      transition: border-color 0.3s;
     }
 
     .col-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
     .col-teach .col-dot { background: var(--accent-teach); box-shadow: 0 0 8px var(--accent-teach); }
     .col-admin .col-dot { background: var(--accent-admin); box-shadow: 0 0 8px var(--accent-admin); }
+    body.light .col-teach .col-dot { box-shadow: none; }
+    body.light .col-admin .col-dot { box-shadow: none; }
 
     .col-title { font-size: 15px; font-weight: 700; flex: 1; }
 
     .col-count {
       font-size: 11px; font-family: var(--font-mono); color: var(--text-muted);
       background: var(--bg); padding: 2px 8px; border-radius: 20px; border: 1px solid var(--border);
+      transition: background 0.3s, border-color 0.3s;
     }
 
     .link-list { list-style: none; padding: 8px 0; min-height: 60px; }
@@ -485,7 +512,6 @@
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
-    /* 開啟按鈕：依欄位顏色區分 */
     .link-open {
       font-size: 11px; font-family: var(--font-mono); text-decoration: none;
       border-radius: 6px; padding: 4px 10px; transition: all 0.2s; flex-shrink: 0;
@@ -495,7 +521,6 @@
 
     .link-open:hover {
       background: rgba(79,255,176,0.2); border-color: var(--accent-teach);
-      box-shadow: 0 0 8px rgba(79,255,176,0.2);
     }
 
     .col-admin .link-open {
@@ -505,16 +530,13 @@
 
     .col-admin .link-open:hover {
       background: rgba(255,107,107,0.2); border-color: var(--accent-admin);
-      box-shadow: 0 0 8px rgba(255,107,107,0.2);
     }
 
-    /* 刪除按鈕：僅管理員模式顯示 */
     .link-del {
       background: none; border: none; color: var(--text-dim);
       cursor: pointer; font-size: 14px; padding: 4px 6px;
       border-radius: 6px; transition: all 0.15s;
-      flex-shrink: 0; line-height: 1;
-      display: none;   /* 預設隱藏 */
+      flex-shrink: 0; line-height: 1; display: none;
     }
 
     body.admin-mode .link-del { display: block; }
@@ -533,6 +555,7 @@
       opacity: 0; pointer-events: none; transition: opacity 0.2s;
     }
 
+    body.light #confirm-overlay { background: rgba(100,110,130,0.5); }
     #confirm-overlay.show { opacity: 1; pointer-events: all; }
 
     .confirm-box {
@@ -540,6 +563,7 @@
       border-radius: var(--radius); padding: 32px;
       max-width: 340px; width: 90%;
       position: relative; transform: translateY(12px); transition: transform 0.2s;
+      box-shadow: 0 20px 60px var(--shadow);
     }
 
     #confirm-overlay.show .confirm-box { transform: translateY(0); }
@@ -588,6 +612,7 @@
       font-size: 13px; font-family: var(--font-mono); color: var(--accent-teach);
       z-index: 1000; transition: transform 0.3s cubic-bezier(.34,1.56,.64,1);
       pointer-events: none; max-width: 90vw; text-align: center;
+      box-shadow: 0 8px 24px var(--shadow);
     }
 
     #toast.show  { transform: translateX(-50%) translateY(0); }
@@ -652,6 +677,8 @@
       <p>校園氛圍編碼網站</p>
     </div>
     <div class="header-right">
+      <!-- 深淺切換 -->
+      <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="切換深色／淺色">🌙</button>
       <div class="admin-badge" id="admin-badge">
         <div class="ab-dot"></div>
         <span>管理員模式</span>
@@ -661,17 +688,6 @@
   </header>
 
   <main>
-
-    <!-- Worker URL 設定（一次性，存 localStorage）-->
-    <div class="worker-setup" id="worker-setup">
-      <label>Worker URL</label>
-      <input type="url" id="worker-url-input"
-             placeholder="https://vibe-portal.你的帳號.workers.dev" />
-      <button class="action-btn" onclick="saveWorkerUrl()">儲存</button>
-      <span style="font-size:11px;font-family:var(--font-mono);color:var(--text-dim);flex:1 1 200px;">
-        部署 worker.js 後貼上 Worker 網址，僅存於此瀏覽器。
-      </span>
-    </div>
 
     <!-- 連結目錄 -->
     <div class="section-header">// 連結目錄</div>
@@ -694,10 +710,8 @@
       </div>
     </div>
 
-    <!-- 管理員工具列（登入後才顯示）-->
+    <!-- 管理員工具列 -->
     <div id="admin-toolbar">
-
-      <!-- 新增連結 -->
       <div class="panel">
         <div class="panel-title">// 新增連結</div>
         <div class="input-row">
@@ -720,7 +734,6 @@
         </div>
       </div>
 
-      <!-- 儲存 / 備份 -->
       <div class="db-actions">
         <div class="panel-title">// 資料管理</div>
         <div class="db-row">
@@ -742,8 +755,7 @@
           <span class="db-hint">修改後按「儲存至 GitHub」，約 1 分鐘後網頁生效。</span>
         </div>
       </div>
-
-    </div><!-- /admin-toolbar -->
+    </div>
 
   </main>
 
@@ -751,31 +763,35 @@
 
   <script>
     // ══════════════════════════════════════════
-    //  設定：Worker URL（存 localStorage）
+    //  Worker URL（預先載入，不再顯示設定欄）
     // ══════════════════════════════════════════
-    const WORKER_KEY = 'vibe_portal_worker_url';
-
-    let workerUrl = '';
+    // Worker URL 固定，不從 localStorage 讀取
+    let workerUrl = 'https://leocloud.dfleoyang.workers.dev';
 
     function loadWorkerUrl() {
-      workerUrl = localStorage.getItem(WORKER_KEY) || 'https://leocloud.dfleoyang.workers.dev';
-      const input = document.getElementById('worker-url-input');
-      if (workerUrl) {
-        input.value = workerUrl;
-        document.getElementById('worker-setup').style.display = 'none';
-      }
+      // 固定網址，無需任何設定
     }
 
-    function saveWorkerUrl() {
-      const val = document.getElementById('worker-url-input').value.trim();
-      try { new URL(val); } catch {
-        toast('請輸入有效的 Worker URL', true); return;
-      }
-      workerUrl = val.replace(/\/$/, '');
-      localStorage.setItem(WORKER_KEY, workerUrl);
-      document.getElementById('worker-setup').style.display = 'none';
-      toast('✓ Worker URL 已儲存，正在載入資料…');
-      loadDB();
+    // ══════════════════════════════════════════
+    //  深色 / 淺色主題
+    // ══════════════════════════════════════════
+    const THEME_KEY = 'vibe_portal_theme';
+
+    function loadTheme() {
+      const saved = localStorage.getItem(THEME_KEY) || 'dark';
+      applyTheme(saved, false);
+    }
+
+    function toggleTheme() {
+      const isLight = document.body.classList.contains('light');
+      applyTheme(isLight ? 'dark' : 'light', true);
+    }
+
+    function applyTheme(theme, save) {
+      const isLight = theme === 'light';
+      document.body.classList.toggle('light', isLight);
+      document.getElementById('theme-btn').textContent = isLight ? '🌙' : '☀️';
+      if (save) localStorage.setItem(THEME_KEY, theme);
     }
 
     // ══════════════════════════════════════════
@@ -783,13 +799,13 @@
     // ══════════════════════════════════════════
     let db      = { links: [], nextId: 1, sha: null };
     let isAdmin = false;
-    let adminPw = '';           // 僅存於記憶體，不寫 localStorage
-    let selectedCat    = '教學';
-    let hasUnsaved     = false;
+    let adminPw = '';
+    let selectedCat     = '教學';
+    let hasUnsaved      = false;
     let pendingDeleteId = null;
 
     // ══════════════════════════════════════════
-    //  讀取資料（GET /api/db，公開）
+    //  讀取資料
     // ══════════════════════════════════════════
     async function loadDB() {
       if (!workerUrl) return;
@@ -824,7 +840,7 @@
     }
 
     // ══════════════════════════════════════════
-    //  管理員登入流程
+    //  管理員登入
     // ══════════════════════════════════════════
     function handleAuthBtn() {
       if (isAdmin) { doLogout(); } else { openLogin(); }
@@ -841,21 +857,18 @@
       document.getElementById('login-overlay').classList.remove('show');
     }
 
-    // 登入：用密碼直接試打一次 PUT，讓 Worker 驗證
     async function doLogin() {
       const pw  = document.getElementById('login-pw').value;
       const btn = document.getElementById('login-ok-btn');
       const err = document.getElementById('login-error');
 
       if (!pw) { err.textContent = '請輸入密碼'; return; }
-      if (!workerUrl) { err.textContent = '請先設定 Worker URL'; return; }
 
       btn.disabled = true;
       btn.textContent = '驗證中…';
       err.textContent = '';
 
       try {
-        // 送一個與現有資料完全相同的 PUT，若密碼正確會成功（SHA 不變）
         const res = await fetch(`${workerUrl}/api/db`, {
           method: 'PUT',
           headers: {
@@ -865,14 +878,9 @@
           body: JSON.stringify(db),
         });
 
-        if (res.status === 401) {
-          err.textContent = '密碼錯誤，請重試。';
-          return;
-        }
-
+        if (res.status === 401) { err.textContent = '密碼錯誤，請重試。'; return; }
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-        // 更新 SHA
         const result = await res.json();
         if (result.sha) db.sha = result.sha;
 
@@ -908,11 +916,10 @@
     }
 
     // ══════════════════════════════════════════
-    //  儲存至 GitHub（PUT /api/db，需密碼）
+    //  儲存至 GitHub
     // ══════════════════════════════════════════
     async function saveToGitHub() {
       if (!isAdmin) { toast('請先登入管理員', true); return; }
-      if (!workerUrl) { toast('請先設定 Worker URL', true); return; }
 
       const btn = document.getElementById('btn-save');
       btn.classList.add('saving');
@@ -921,19 +928,13 @@
         const res = await fetch(`${workerUrl}/api/db`, {
           method: 'PUT',
           headers: {
-            'Content-Type':    'application/json',
+            'Content-Type':     'application/json',
             'X-Admin-Password': adminPw,
           },
           body: JSON.stringify(db),
         });
 
-        if (res.status === 401) {
-          // 密碼在記憶體中，理論上不應發生，但防呆
-          doLogout();
-          toast('工作階段已過期，請重新登入', true);
-          return;
-        }
-
+        if (res.status === 401) { doLogout(); toast('工作階段已過期，請重新登入', true); return; }
         if (!res.ok) {
           const errData = await res.json().catch(() => ({}));
           throw new Error(errData.error || `HTTP ${res.status}`);
@@ -952,7 +953,7 @@
     }
 
     // ══════════════════════════════════════════
-    //  分類選取
+    //  分類 / 新增 / 刪除
     // ══════════════════════════════════════════
     function selectCat(btn) {
       document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
@@ -960,9 +961,6 @@
       selectedCat = btn.dataset.cat;
     }
 
-    // ══════════════════════════════════════════
-    //  新增連結
-    // ══════════════════════════════════════════
     function addLink() {
       const title = document.getElementById('inp-title').value.trim();
       const url   = document.getElementById('inp-url').value.trim();
@@ -972,9 +970,7 @@
       try {
         const p = new URL(url);
         if (!['http:','https:'].includes(p.protocol)) throw new Error();
-      } catch {
-        toast('請輸入有效網址（https://…）', true); return;
-      }
+      } catch { toast('請輸入有效網址（https://…）', true); return; }
 
       db.links.push({ id: db.nextId++, category: selectedCat, title, url });
       document.getElementById('inp-title').value = '';
@@ -984,9 +980,6 @@
       toast('✓ 已新增：' + title);
     }
 
-    // ══════════════════════════════════════════
-    //  刪除確認
-    // ══════════════════════════════════════════
     function deleteLink(id) {
       const item = db.links.find(l => l.id === id);
       if (!item) return;
@@ -1014,9 +1007,6 @@
       if (e.target === this) closeConfirm();
     });
 
-    // ══════════════════════════════════════════
-    //  未儲存提示
-    // ══════════════════════════════════════════
     function markUnsaved() {
       hasUnsaved = true;
       document.getElementById('unsaved-banner').classList.add('show');
@@ -1064,7 +1054,7 @@
     }
 
     // ══════════════════════════════════════════
-    //  備援：本機匯出 / 匯入
+    //  備援匯出 / 匯入
     // ══════════════════════════════════════════
     function exportJSON() {
       const json = JSON.stringify({ links: db.links, nextId: db.nextId }, null, 2);
@@ -1085,8 +1075,8 @@
           const imported = JSON.parse(e.target.result);
           if (!Array.isArray(imported.links)) throw new Error('格式錯誤');
           const maxId = imported.links.reduce((m, l) => Math.max(m, l.id || 0), 0);
-          db.links   = imported.links;
-          db.nextId  = Math.max(imported.nextId || 0, maxId + 1);
+          db.links  = imported.links;
+          db.nextId = Math.max(imported.nextId || 0, maxId + 1);
           markUnsaved();
           render();
           toast(`✓ 已匯入 ${db.links.length} 筆資料（尚未儲存）`);
@@ -1121,14 +1111,12 @@
       }
     });
 
-    // ══════════════════════════════════════════
-    //  離開前警告
-    // ══════════════════════════════════════════
     window.addEventListener('beforeunload', e => {
       if (hasUnsaved) { e.preventDefault(); e.returnValue = ''; }
     });
 
     // ── 啟動 ──
+    loadTheme();
     loadWorkerUrl();
     loadDB();
   </script>
