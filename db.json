@@ -59,7 +59,13 @@
       "category": "行政",
       "title": "學生組成儀表板",
       "url": "https://dfleoyang-hlhs.github.io/HL-STUDENT/"
+    },
+    {
+      "id": 11,
+      "category": "行政",
+      "title": "九十花中-仁心遠揚",
+      "url": "https://dfleoyang-hlhs.github.io/hlhs90ann/index.html"
     }
   ],
-  "nextId": 11
+  "nextId": 12
 }
