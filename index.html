@@ -758,7 +758,7 @@
     let workerUrl = '';
 
     function loadWorkerUrl() {
-      workerUrl = localStorage.getItem(WORKER_KEY) || '';
+      workerUrl = localStorage.getItem(WORKER_KEY) || 'https://leocloud.dfleoyang.workers.dev';
       const input = document.getElementById('worker-url-input');
       if (workerUrl) {
         input.value = workerUrl;
