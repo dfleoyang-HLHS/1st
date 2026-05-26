@@ -59,7 +59,13 @@
       "category": "教學",
       "title": "六分鐘感恩日記",
       "url": "https://dfleoyang-hlhs.github.io/6minsDiary/"
+    },
+    {
+      "id": 12,
+      "category": "行政",
+      "title": "USA",
+      "url": "https://dfleoyang-hlhs.github.io/semi-weekly/"
     }
   ],
-  "nextId": 12
+  "nextId": 13
 }
