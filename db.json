@@ -1,22 +1,10 @@
 {
   "links": [
     {
-      "id": 11,
-      "category": "行政",
-      "title": "九十花中-仁心遠揚",
-      "url": "https://dfleoyang-hlhs.github.io/hlhs90ann/index.html"
-    },
-    {
       "id": 4,
       "category": "行政",
       "title": "課表查詢",
       "url": "https://dfleoyang-hlhs.github.io/hlhs_class/"
-    },
-    {
-      "id": 1,
-      "category": "行政",
-      "title": "學生圖表",
-      "url": "https://dfleoyang-hlhs.github.io/HL-STUDENT/"
     },
     {
       "id": 2,
@@ -25,10 +13,28 @@
       "url": "https://dfleoyang-hlhs.github.io/gsat-hlhs-115/"
     },
     {
+      "id": 11,
+      "category": "行政",
+      "title": "九十花中-仁心遠揚",
+      "url": "https://dfleoyang-hlhs.github.io/hlhs90ann/index.html"
+    },
+    {
+      "id": 1,
+      "category": "行政",
+      "title": "學生圖表",
+      "url": "https://dfleoyang-hlhs.github.io/HL-STUDENT/"
+    },
+    {
       "id": 3,
       "category": "行政",
       "title": "115大學個人申請(2026)",
       "url": "https://dfleoyang-hlhs.github.io/CACHLHS115/"
+    },
+    {
+      "id": 13,
+      "category": "教學",
+      "title": "花中 NPDL",
+      "url": "https://dfleoyang-hlhs/npdl/"
     },
     {
       "id": 8,
@@ -67,5 +73,5 @@
       "url": "https://dfleoyang-hlhs.github.io/semi-weekly/"
     }
   ],
-  "nextId": 13
+  "nextId": 14
 }
