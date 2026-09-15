@@ -708,7 +708,7 @@
   <header>
     <div class="logo-mark">VP</div>
     <div class="header-text">
-      <h1>花蓮高中_Vibe-Coding_入口網站</h1>
+      <h1>Vibe Portal</h1>
       <p>校園氛圍編碼網站</p>
     </div>
     <div class="header-right">
@@ -813,7 +813,7 @@
     const THEME_KEY = 'vibe_portal_theme';
 
     function loadTheme() {
-      const saved = localStorage.getItem(THEME_KEY) || 'light';
+      const saved = localStorage.getItem(THEME_KEY) || 'dark';
       applyTheme(saved, false);
     }
 
@@ -904,6 +904,12 @@
       err.textContent = '';
 
       try {
+        const freshRes = await fetch(`${workerUrl}/api/db`);
+        if (!freshRes.ok) throw new Error(`HTTP ${freshRes.status}`);
+        const freshData = await freshRes.json();
+        db = { links: freshData.links || [], nextId: freshData.nextId || 1, sha: freshData.sha || null };
+        render();
+
         const res = await fetch(`${workerUrl}/api/db`, {
           method: 'PUT',
           headers: {
@@ -1069,10 +1075,10 @@
     function renderList(items) {
       if (!items.length) return `<li class="empty">— 尚無連結 —</li>`;
       return items.map((l, i) => {
-        const initial  = (l.title || '?')[0];
+        const initial  = escHtml((l.title || '?')[0]);
         const shortUrl = l.url.replace(/^https?:\/\//, '').replace(/\/$/, '');
         return `
-          <li class="link-item" draggable="true" data-id="${l.id}" style="animation-delay:${i * 0.05}s">
+          <li class="link-item" draggable="true" data-id="${escHtml(String(l.id))}" style="animation-delay:${i * 0.05}s">
             <div class="drag-handle" title="拖曳排序">⠿</div>
             <div class="link-icon">${initial}</div>
             <div class="link-info">
@@ -1080,9 +1086,24 @@
               <div class="link-url">${escHtml(shortUrl)}</div>
             </div>
             <a class="link-open" href="${escHtml(l.url)}" target="_blank" rel="noopener">開啟</a>
-            <button class="link-del" title="刪除" onclick="deleteLink(${l.id})">✕</button>
+            <button class="link-del" title="刪除">✕</button>
           </li>`;
       }).join('');
+    }
+
+    function setupListActions() {
+      ['list-teach', 'list-admin'].forEach(listId => {
+        const list = document.getElementById(listId);
+        if (!list) return;
+        list.addEventListener('click', e => {
+          const delBtn = e.target.closest('.link-del');
+          if (!delBtn) return;
+          const li = delBtn.closest('.link-item');
+          if (!li) return;
+          const id = parseInt(li.dataset.id, 10);
+          if (!Number.isNaN(id)) deleteLink(id);
+        });
+      });
     }
 
     // ══════════════════════════════════════════
@@ -1180,8 +1201,15 @@
         try {
           const imported = JSON.parse(e.target.result);
           if (!Array.isArray(imported.links)) throw new Error('格式錯誤');
-          const maxId = imported.links.reduce((m, l) => Math.max(m, l.id || 0), 0);
-          db.links  = imported.links;
+          const cleaned = imported.links.map((l, i) => {
+            if (typeof l.id !== 'number' || !Number.isFinite(l.id)) throw new Error(`第 ${i + 1} 筆資料 id 格式錯誤`);
+            if (typeof l.title !== 'string' || !l.title) throw new Error(`第 ${i + 1} 筆資料缺少名稱`);
+            if (typeof l.url !== 'string' || !l.url) throw new Error(`第 ${i + 1} 筆資料缺少網址`);
+            if (l.category !== '教學' && l.category !== '行政') throw new Error(`第 ${i + 1} 筆資料分類錯誤`);
+            return { id: l.id, title: l.title, url: l.url, category: l.category };
+          });
+          const maxId = cleaned.reduce((m, l) => Math.max(m, l.id), 0);
+          db.links  = cleaned;
           db.nextId = Math.max(imported.nextId || 0, maxId + 1);
           markUnsaved();
           render();
@@ -1224,6 +1252,7 @@
     // ── 啟動 ──
     loadTheme();
     loadWorkerUrl();
+    setupListActions();
     loadDB().then(() => initDrag());
   </script>
 </body>
