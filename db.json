@@ -71,7 +71,31 @@
       "title": "USA",
       "url": "https://dfleoyang-hlhs.github.io/semi-weekly/",
       "category": "行政"
+    },
+    {
+      "id": 15,
+      "title": "money168",
+      "url": "https://dfleoyang-hlhs.github.io/money168/",
+      "category": "財務"
+    },
+    {
+      "id": 16,
+      "title": "進場的訊號",
+      "url": "https://dfleoyang-hlhx.github.io/theLongGoodBuy/",
+      "category": "財務"
+    },
+    {
+      "id": 17,
+      "title": "半導體週報",
+      "url": "https://dfleoyang-hlhs.github.io/semi-weekly/",
+      "category": "財務"
+    },
+    {
+      "id": 18,
+      "title": "聖經彙編小語",
+      "url": "https://dfleoyang-hlhs.github.io/bible_cat/",
+      "category": "其他"
     }
   ],
-  "nextId": 14
+  "nextId": 19
 }
