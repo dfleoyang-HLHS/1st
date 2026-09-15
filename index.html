@@ -21,6 +21,10 @@
       --accent-admin:     #ff6b6b;
       --accent-teach-dim: rgba(79,255,176,0.12);
       --accent-admin-dim: rgba(255,107,107,0.12);
+      --accent-finance:     #ffd166;
+      --accent-finance-dim: rgba(255,209,102,0.12);
+      --accent-other:       #38bdf8;
+      --accent-other-dim:   rgba(56,189,248,0.12);
       --accent-github:    #a78bfa;
       --accent-github-dim:rgba(167,139,250,0.12);
       --text:             #e8eaf0;
@@ -44,6 +48,10 @@
       --accent-admin:     #d63a3a;
       --accent-teach-dim: rgba(10,143,92,0.1);
       --accent-admin-dim: rgba(214,58,58,0.1);
+      --accent-finance:     #b8860b;
+      --accent-finance-dim: rgba(184,134,11,0.1);
+      --accent-other:       #0369a1;
+      --accent-other-dim:   rgba(3,105,161,0.1);
       --accent-github:    #6d43d4;
       --accent-github-dim:rgba(109,67,212,0.1);
       --text:             #1a1d2e;
@@ -348,7 +356,7 @@
 
     input::placeholder { color: var(--text-dim); }
 
-    .cat-tabs { display: flex; gap: 6px; }
+    .cat-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
 
     .cat-btn {
       padding: 11px 20px; border-radius: 8px;
@@ -366,6 +374,14 @@
 
     .cat-btn.admin.active {
       background: var(--accent-admin-dim); border-color: var(--accent-admin); color: var(--accent-admin);
+    }
+
+    .cat-btn.finance.active {
+      background: var(--accent-finance-dim); border-color: var(--accent-finance); color: var(--accent-finance);
+    }
+
+    .cat-btn.other.active {
+      background: var(--accent-other-dim); border-color: var(--accent-other); color: var(--accent-other);
     }
 
     .add-btn {
@@ -455,6 +471,8 @@
     }
 
     .column:nth-child(2) { animation-delay: 0.08s; }
+    .column:nth-child(3) { animation-delay: 0.16s; }
+    .column:nth-child(4) { animation-delay: 0.24s; }
 
     .col-header {
       padding: 20px 24px 16px; border-bottom: 1px solid var(--border);
@@ -465,8 +483,12 @@
     .col-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
     .col-teach .col-dot { background: var(--accent-teach); box-shadow: 0 0 8px var(--accent-teach); }
     .col-admin .col-dot { background: var(--accent-admin); box-shadow: 0 0 8px var(--accent-admin); }
+    .col-finance .col-dot { background: var(--accent-finance); box-shadow: 0 0 8px var(--accent-finance); }
+    .col-other .col-dot { background: var(--accent-other); box-shadow: 0 0 8px var(--accent-other); }
     body.light .col-teach .col-dot { box-shadow: none; }
     body.light .col-admin .col-dot { box-shadow: none; }
+    body.light .col-finance .col-dot { box-shadow: none; }
+    body.light .col-other .col-dot { box-shadow: none; }
 
     .col-title { font-size: 15px; font-weight: 700; flex: 1; }
 
@@ -499,6 +521,8 @@
 
     .col-teach .link-icon { background: var(--accent-teach-dim); color: var(--accent-teach); }
     .col-admin .link-icon { background: var(--accent-admin-dim); color: var(--accent-admin); }
+    .col-finance .link-icon { background: var(--accent-finance-dim); color: var(--accent-finance); }
+    .col-other .link-icon { background: var(--accent-other-dim); color: var(--accent-other); }
 
     .link-info { flex: 1; min-width: 0; }
 
@@ -530,6 +554,24 @@
 
     .col-admin .link-open:hover {
       background: rgba(255,107,107,0.2); border-color: var(--accent-admin);
+    }
+
+    .col-finance .link-open {
+      border-color: rgba(255,209,102,0.4);
+      color: var(--accent-finance); background: var(--accent-finance-dim);
+    }
+
+    .col-finance .link-open:hover {
+      background: rgba(255,209,102,0.25); border-color: var(--accent-finance);
+    }
+
+    .col-other .link-open {
+      border-color: rgba(56,189,248,0.35);
+      color: var(--accent-other); background: var(--accent-other-dim);
+    }
+
+    .col-other .link-open:hover {
+      background: rgba(56,189,248,0.22); border-color: var(--accent-other);
     }
 
     .link-del {
@@ -575,6 +617,22 @@
 
     .col-admin .link-item.drag-over-bottom {
       border-bottom-color: var(--accent-admin);
+    }
+
+    .col-finance .link-item.drag-over-top {
+      border-top-color: var(--accent-finance);
+    }
+
+    .col-finance .link-item.drag-over-bottom {
+      border-bottom-color: var(--accent-finance);
+    }
+
+    .col-other .link-item.drag-over-top {
+      border-top-color: var(--accent-other);
+    }
+
+    .col-other .link-item.drag-over-bottom {
+      border-bottom-color: var(--accent-other);
     }
 
     .empty {
@@ -743,6 +801,22 @@
         </div>
         <ul class="link-list" id="list-admin"></ul>
       </div>
+      <div class="column col-finance">
+        <div class="col-header">
+          <div class="col-dot"></div>
+          <span class="col-title">財務</span>
+          <span class="col-count" id="count-finance">0</span>
+        </div>
+        <ul class="link-list" id="list-finance"></ul>
+      </div>
+      <div class="column col-other">
+        <div class="col-header">
+          <div class="col-dot"></div>
+          <span class="col-title">其他</span>
+          <span class="col-count" id="count-other">0</span>
+        </div>
+        <ul class="link-list" id="list-other"></ul>
+      </div>
     </div>
 
     <!-- 管理員工具列 -->
@@ -763,6 +837,8 @@
             <div class="cat-tabs">
               <button class="cat-btn teach active" data-cat="教學" onclick="selectCat(this)">教學</button>
               <button class="cat-btn admin" data-cat="行政" onclick="selectCat(this)">行政</button>
+              <button class="cat-btn finance" data-cat="財務" onclick="selectCat(this)">財務</button>
+              <button class="cat-btn other" data-cat="其他" onclick="selectCat(this)">其他</button>
             </div>
           </div>
           <button class="add-btn" onclick="addLink()">＋ 新增</button>
@@ -839,6 +915,9 @@
     let hasUnsaved      = false;
     let pendingDeleteId = null;
 
+    const CAT_KEY  = { '教學': 'teach', '行政': 'admin', '財務': 'finance', '其他': 'other' };
+    const LIST_IDS = Object.values(CAT_KEY).map(key => `list-${key}`);
+
     // ══════════════════════════════════════════
     //  讀取資料
     // ══════════════════════════════════════════
@@ -859,13 +938,13 @@
     }
 
     function setLoading(on) {
-      ['list-teach','list-admin'].forEach(id => {
+      LIST_IDS.forEach(id => {
         if (on) document.getElementById(id).innerHTML = `<li class="empty">讀取中…</li>`;
       });
     }
 
     function showFetchError(msg) {
-      ['list-teach','list-admin'].forEach(id => {
+      LIST_IDS.forEach(id => {
         document.getElementById(id).innerHTML =
           `<li class="empty" style="color:var(--accent-admin)">
             ⚠ 無法讀取資料<br>
@@ -1062,12 +1141,11 @@
     //  渲染
     // ══════════════════════════════════════════
     function render() {
-      const teach = db.links.filter(l => l.category === '教學');
-      const admin = db.links.filter(l => l.category === '行政');
-      document.getElementById('count-teach').textContent = teach.length;
-      document.getElementById('count-admin').textContent = admin.length;
-      document.getElementById('list-teach').innerHTML = renderList(teach);
-      document.getElementById('list-admin').innerHTML = renderList(admin);
+      Object.entries(CAT_KEY).forEach(([cat, key]) => {
+        const items = db.links.filter(l => l.category === cat);
+        document.getElementById(`count-${key}`).textContent = items.length;
+        document.getElementById(`list-${key}`).innerHTML = renderList(items);
+      });
       // 每次渲染後重新綁定拖曳事件
       if (typeof initDrag === 'function') initDrag();
     }
@@ -1092,7 +1170,7 @@
     }
 
     function setupListActions() {
-      ['list-teach', 'list-admin'].forEach(listId => {
+      LIST_IDS.forEach(listId => {
         const list = document.getElementById(listId);
         if (!list) return;
         list.addEventListener('click', e => {
@@ -1112,7 +1190,7 @@
     let dragSrcId = null;
 
     function initDrag() {
-      ['list-teach', 'list-admin'].forEach(listId => {
+      LIST_IDS.forEach(listId => {
         const list = document.getElementById(listId);
         if (!list) return;
 
@@ -1205,7 +1283,7 @@
             if (typeof l.id !== 'number' || !Number.isFinite(l.id)) throw new Error(`第 ${i + 1} 筆資料 id 格式錯誤`);
             if (typeof l.title !== 'string' || !l.title) throw new Error(`第 ${i + 1} 筆資料缺少名稱`);
             if (typeof l.url !== 'string' || !l.url) throw new Error(`第 ${i + 1} 筆資料缺少網址`);
-            if (l.category !== '教學' && l.category !== '行政') throw new Error(`第 ${i + 1} 筆資料分類錯誤`);
+            if (!Object.prototype.hasOwnProperty.call(CAT_KEY, l.category)) throw new Error(`第 ${i + 1} 筆資料分類錯誤`);
             return { id: l.id, title: l.title, url: l.url, category: l.category };
           });
           const maxId = cleaned.reduce((m, l) => Math.max(m, l.id), 0);
