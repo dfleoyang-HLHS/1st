@@ -37,6 +37,12 @@
       "category": "教學"
     },
     {
+      "id": 20,
+      "title": "KAHOOT",
+      "url": "https://kahoot-classroom.onrender.com/",
+      "category": "教學"
+    },
+    {
       "id": 8,
       "title": "里歐咖啡",
       "url": "https://dfleoyang-hlhs.github.io/leocafe/",
@@ -95,12 +101,6 @@
       "title": "聖經彙編小語",
       "url": "https://dfleoyang-hlhs.github.io/bible_cat/",
       "category": "其他"
-    },
-    {
-      "id": 20,
-      "title": "KAHOOT",
-      "url": "https://kahoot-classroom.onrender.com/",
-      "category": "教學"
     }
   ],
   "nextId": 21
