@@ -31,12 +31,6 @@
       "category": "行政"
     },
     {
-      "id": 13,
-      "title": "花中 NPDL",
-      "url": "https://dfleoyang-hlhs/npdl/",
-      "category": "教學"
-    },
-    {
       "id": 20,
       "title": "KAHOOT",
       "url": "https://kahoot-classroom.onrender.com/",
@@ -49,15 +43,15 @@
       "category": "教學"
     },
     {
-      "id": 6,
-      "title": "化學元素",
-      "url": "https://dfleoyang-hlhs.github.io/chemicalelement/",
-      "category": "教學"
-    },
-    {
       "id": 7,
       "title": "高中化學",
       "url": "https://dfleoyang-hlhs.github.io/chem_master/",
+      "category": "教學"
+    },
+    {
+      "id": 6,
+      "title": "化學元素",
+      "url": "https://dfleoyang-hlhs.github.io/chemicalelement/",
       "category": "教學"
     },
     {
