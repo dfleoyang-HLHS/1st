@@ -1,6 +1,12 @@
 {
   "links": [
     {
+      "id": 24,
+      "title": "花中簡介報告",
+      "url": "https://dfleoyang-hlhs.github.io/hlhs-intro",
+      "category": "行政"
+    },
+    {
       "id": 4,
       "title": "課表查詢",
       "url": "https://dfleoyang-hlhs.github.io/hlhs_class/",
@@ -103,5 +109,5 @@
       "category": "行政"
     }
   ],
-  "nextId": 24
+  "nextId": 25
 }
