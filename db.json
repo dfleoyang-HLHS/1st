@@ -7,6 +7,12 @@
       "category": "行政"
     },
     {
+      "id": 1,
+      "title": "學生圖表",
+      "url": "https://dfleoyang-hlhs.github.io/HL-STUDENT/",
+      "category": "行政"
+    },
+    {
       "id": 4,
       "title": "課表查詢",
       "url": "https://dfleoyang-hlhs.github.io/hlhs_class/",
@@ -22,12 +28,6 @@
       "id": 11,
       "title": "九十花中-仁心遠揚",
       "url": "https://dfleoyang-hlhs.github.io/hlhs90ann/index.html",
-      "category": "行政"
-    },
-    {
-      "id": 1,
-      "title": "學生圖表",
-      "url": "https://dfleoyang-hlhs.github.io/HL-STUDENT/",
       "category": "行政"
     },
     {
