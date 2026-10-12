@@ -19,6 +19,12 @@
       "category": "行政"
     },
     {
+      "id": 28,
+      "title": "學生分析圖表(校內)",
+      "url": "https://claude.ai/artifact/Wg4g1fRePdKaZaaZ7paT61",
+      "category": "行政"
+    },
+    {
       "id": 4,
       "title": "課表查詢",
       "url": "https://dfleoyang-hlhs.github.io/hlhs_class/",
@@ -118,12 +124,6 @@
       "id": 2,
       "title": "115學測分析",
       "url": "https://dfleoyang-hlhs.github.io/gsat-hlhs-115/",
-      "category": "行政"
-    },
-    {
-      "id": 28,
-      "title": "學生分析圖表(校內)",
-      "url": "https://claude.ai/artifact/Wg4g1fRePdKaZaaZ7paT61",
       "category": "行政"
     }
   ],
