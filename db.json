@@ -43,6 +43,12 @@
       "category": "行政"
     },
     {
+      "id": 29,
+      "title": "CHEM2026",
+      "url": "https://dfleoyang-hlhs.github.io/CHEM2026/",
+      "category": "教學"
+    },
+    {
       "id": 20,
       "title": "KAHOOT",
       "url": "https://kahoot-classroom.onrender.com/",
@@ -127,5 +133,5 @@
       "category": "行政"
     }
   ],
-  "nextId": 29
+  "nextId": 30
 }
