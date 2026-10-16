@@ -131,7 +131,13 @@
       "title": "115學測分析",
       "url": "https://dfleoyang-hlhs.github.io/gsat-hlhs-115/",
       "category": "行政"
+    },
+    {
+      "id": 30,
+      "title": "校事會議",
+      "url": "https://dfleoyang-hlhs.github.io/schoolevent/",
+      "category": "行政"
     }
   ],
-  "nextId": 30
+  "nextId": 31
 }
