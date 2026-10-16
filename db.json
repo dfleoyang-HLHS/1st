@@ -31,6 +31,12 @@
       "category": "行政"
     },
     {
+      "id": 30,
+      "title": "校事會議",
+      "url": "https://dfleoyang-hlhs.github.io/schoolevent/",
+      "category": "行政"
+    },
+    {
       "id": 11,
       "title": "九十花中-仁心遠揚",
       "url": "https://dfleoyang-hlhs.github.io/hlhs90ann/index.html",
@@ -130,12 +136,6 @@
       "id": 2,
       "title": "115學測分析",
       "url": "https://dfleoyang-hlhs.github.io/gsat-hlhs-115/",
-      "category": "行政"
-    },
-    {
-      "id": 30,
-      "title": "校事會議",
-      "url": "https://dfleoyang-hlhs.github.io/schoolevent/",
       "category": "行政"
     }
   ],
