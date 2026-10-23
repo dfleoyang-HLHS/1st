@@ -137,7 +137,13 @@
       "title": "115學測分析",
       "url": "https://dfleoyang-hlhs.github.io/gsat-hlhs-115/",
       "category": "行政"
+    },
+    {
+      "id": 31,
+      "title": "MBTI",
+      "url": "https://dfleoyang-hlhs.github.io/mbti/",
+      "category": "教學"
     }
   ],
-  "nextId": 31
+  "nextId": 32
 }
