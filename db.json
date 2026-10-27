@@ -143,7 +143,13 @@
       "title": "MBTI",
       "url": "https://dfleoyang-hlhs.github.io/mbti/",
       "category": "教學"
+    },
+    {
+      "id": 32,
+      "title": "NPDL2026",
+      "url": "https://dfleoyang-hlhs.github.io/1027test/",
+      "category": "教學"
     }
   ],
-  "nextId": 32
+  "nextId": 33
 }
