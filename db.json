@@ -149,7 +149,13 @@
       "title": "NPDL2026",
       "url": "https://dfleoyang-hlhs.github.io/1027test/",
       "category": "教學"
+    },
+    {
+      "id": 33,
+      "title": "職業興趣量表(O*NET測試用)",
+      "url": "https://dfleoyang-hlhs.github.io/holland/index.html",
+      "category": "教學"
     }
   ],
-  "nextId": 33
+  "nextId": 34
 }
