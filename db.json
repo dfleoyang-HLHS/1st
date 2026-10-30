@@ -155,7 +155,13 @@
       "title": "職業興趣量表(O*NET測試用)",
       "url": "https://dfleoyang-hlhs.github.io/holland/index.html",
       "category": "教學"
+    },
+    {
+      "id": 34,
+      "title": "心智圖",
+      "url": "https://dfleoyang-hlhs.github.io/mentalmap/",
+      "category": "教學"
     }
   ],
-  "nextId": 34
+  "nextId": 35
 }
